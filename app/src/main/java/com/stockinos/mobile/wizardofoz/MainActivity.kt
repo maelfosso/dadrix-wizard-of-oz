@@ -26,6 +26,16 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        val app = this.application as WoZApplication
+        app.connectSocket()
+        app.emitNotice("It's Oscar")
+    }
+
+    override fun onDestroy() {
+        val app = this.application as WoZApplication
+        app.disconnectSocket()
+        super.onDestroy()
     }
 }
 
