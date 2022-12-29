@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id "org.jetbrains.kotlin.kapt" version "1.7.20" apply true
 }
 
 android {
@@ -37,7 +38,8 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.1.1'
+//        kotlinCompilerExtensionVersion '1.1.1'
+        kotlinCompilerExtensionVersion "1.3.2"
     }
     packagingOptions {
         resources {
@@ -47,16 +49,32 @@ android {
 }
 
 dependencies {
-
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    implementation 'com.google.code.gson:gson:2.9.0' // Gradle
     implementation 'androidx.activity:activity-compose:1.3.1'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_ui_version"
     implementation 'androidx.compose.material:material:1.1.1'
     implementation ('io.socket:socket.io-client:2.0.1') {
         exclude group: 'org.json', module: 'json'
     }
+
+    // def room_version = "2.4.3"
+    // annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    // To use Kotlin annotation processing tool (kapt)
+    kapt "androidx.room:room-compiler:$room_version"
+    // To use Kotlin Symbol Processing (KSP)
+//     ksp "androidx.room:room-compiler:$room_version"
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$room_version"
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

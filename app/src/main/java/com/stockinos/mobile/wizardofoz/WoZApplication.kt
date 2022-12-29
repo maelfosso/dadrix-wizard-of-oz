@@ -2,9 +2,16 @@ package com.stockinos.mobile.wizardofoz
 
 import android.app.Application
 import android.util.Log
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.gson.Gson
+import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
+import com.stockinos.mobile.wizardofoz.repositories.WhatsappMessageRepository
+import com.stockinos.mobile.wizardofoz.ui.MessagesViewModel
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import org.json.JSONObject
 import java.net.URISyntaxException
 
@@ -12,6 +19,14 @@ class WoZApplication: Application() {
     companion object {
         private val TAG = WoZApplication::class.simpleName
     }
+
+    // No need to cancel this scope as it'll be torn down with the process
+    val applicationScope = CoroutineScope(SupervisorJob())
+    // Using by lazy so the database and the repository are only created when they're need
+    // rather than when the application starts
+    private val database by lazy { WoZRoomDatabase.getDatabase(this, applicationScope) }
+    val repository by lazy { WhatsappMessageRepository(database.whatsappMessageDao()) }
+
 
     private var mSocket: Socket? = null
         get() {
@@ -31,9 +46,16 @@ class WoZApplication: Application() {
             return field
         }
 
+//    private var messagesViewModel: MessagesViewModel = viewModel()
+
     private var onWhatsappMessageReceived = Emitter.Listener {
-        var data = it[0] as JSONObject
+//        var data = it[0] as JSONObject
+        Log.d(TAG, "on whatsapp:message:received before : ${it[0]}")
+        val data = Gson().fromJson(it[0].toString(), WhatsappMessage::class.java)
         Log.d(TAG, "on whatsapp:message:received : $data")
+
+//        messagesViewModel.add(WhatsappMessage())
+        repository.insert(data)
     }
 
     fun connectSocket() {
