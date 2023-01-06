@@ -6,13 +6,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stockinos.mobile.wizardofoz.ui.MessagesViewModel
@@ -36,7 +38,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                     MessagesScreen(messagesViewModel = messagesViewModel)
+                     MessagesWidget(messagesViewModel = messagesViewModel)
                 }
             }
         }
@@ -52,14 +54,36 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun MessagesWidget(messagesViewModel: MessagesViewModel = viewModel()) {
+    Scaffold(
+        topBar = {
+            TopAppBar (
+                title = {
+                    Text(
+                        text = "Messages",
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = {}) {
+                        Icon(Icons.Filled.Menu, "ContentDescription")
+                    }
+                },
+                backgroundColor = Color.Black,
+                contentColor = Color.White,
+                elevation = 12.dp
+            )
+        },
+        content = {
+            MessagesScreen(messagesViewModel = messagesViewModel)
+        }
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     WizardOfOzTheme {
-        MessagesScreen()
+        MessagesWidget()
     }
 }

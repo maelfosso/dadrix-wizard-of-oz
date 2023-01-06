@@ -2,6 +2,9 @@ package com.stockinos.mobile.wizardofoz.ui.theme
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -15,9 +18,14 @@ fun MessagesScreen(
     messagesViewModel: MessagesViewModel = viewModel()
 ) {
     Log.i("MessagesScreen", "MsgScreen : ${messagesViewModel.allMessages.value?.size}")
-    Column(modifier = modifier) {
-        MessagesList(
-            messagesLiveData = messagesViewModel.allMessagesByUser
-        )
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colors.background
+    ) {
+        Column(modifier = modifier) {
+            MessagesList(
+                messagesLiveData = messagesViewModel.allMessagesByUser
+            )
+        }
     }
 }
