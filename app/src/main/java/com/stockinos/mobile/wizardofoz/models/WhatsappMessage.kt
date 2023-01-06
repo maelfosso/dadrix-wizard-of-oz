@@ -21,20 +21,23 @@ data class WhatsappMessage (
     val type: String,
 
     @SerializedName("text_id")
-    val textId: String?,
+    val textId: String? = null,
     @SerializedName("text")
-    @Embedded val text: WhatsappMessageText?,
+    @Embedded val text: WhatsappMessageText? = null,
 
     @SerializedName("image_id")
-    val imageId: String?,
+    val imageId: String? = null,
     @SerializedName("image")
-    @Embedded val image: WhatsappMessageImage?,
+    @Embedded val image: WhatsappMessageImage? = null,
 
     @SerializedName("audio_id")
-    val audioId: String?,
+    val audioId: String? = null,
     @SerializedName("audio")
-    @Embedded val audio: WhatsappMessageAudio?
-)
+    @Embedded val audio: WhatsappMessageAudio? = null,
+) {
+    var state: String? = "unread"
+        get() = field ?: "unread"
+}
 
 @Entity(tableName = "whatsapp_messages_texts")
 data class WhatsappMessageText (

@@ -12,6 +12,10 @@ import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
 import org.json.JSONObject
 import java.net.URISyntaxException
 
@@ -33,9 +37,6 @@ class WoZApplication: Application() {
             if (field == null) {
                 try {
                     val opts = IO.Options()
-//                    opts.forceNew = true
-//                    opts.reconnection = false
-//                    field = IO.socket("https://api.stockinos.ngrok.io", opts)
                     field = IO.socket("http://10.0.2.2:4000", opts)
                     setupSocket()
                 } catch (e: URISyntaxException) {
@@ -46,16 +47,14 @@ class WoZApplication: Application() {
             return field
         }
 
-//    private var messagesViewModel: MessagesViewModel = viewModel()
 
     private var onWhatsappMessageReceived = Emitter.Listener {
-//        var data = it[0] as JSONObject
         Log.d(TAG, "on whatsapp:message:received before : ${it[0]}")
         val data = Gson().fromJson(it[0].toString(), WhatsappMessage::class.java)
         Log.d(TAG, "on whatsapp:message:received : $data")
 
-//        messagesViewModel.add(WhatsappMessage())
         repository.insert(data)
+//        Log.d(TAG, "NB Items : ${repository.allWhatsappMessages.count()}")
     }
 
     fun connectSocket() {

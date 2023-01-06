@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
         WhatsappMessageImage::class,
         WhatsappMessageAudio::class
     ),
-    version = 5,
+    version = 12,
     exportSchema = false
 )
 public abstract class WoZRoomDatabase: RoomDatabase() {
@@ -32,8 +32,13 @@ public abstract class WoZRoomDatabase: RoomDatabase() {
     ): RoomDatabase.Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
+
+            // db.delete("whatsapp_messages")
+            db.execSQL("DROP TABLE whatsapp_messages")
+
             INSTANCE?.let { database ->
                 scope.launch {
+                    // database.
                     populateDatabase(database.whatsappMessageDao())
                 }
             }

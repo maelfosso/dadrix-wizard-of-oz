@@ -23,10 +23,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
+import com.stockinos.mobile.wizardofoz.ui.messages.MessagesByUser
 
 @Composable
 fun MessageItem(
-    message: WhatsappMessage,
+    message: MessagesByUser, // WhatsappMessage,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -64,7 +65,7 @@ fun MessageItem(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = message.from.uppercase()[0].toString(),
+                    text = message.user.uppercase()[0].toString(), // message.from.uppercase()[0].toString(),
                     style = TextStyle(
                         fontWeight = FontWeight.W500,
                         fontSize = 16.sp,
@@ -76,30 +77,57 @@ fun MessageItem(
             }
             Column {
                 Text(
-                    text = message.from,
+                    text = message.user,
                     style = TextStyle(
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.W400,
+                        fontWeight = FontWeight.W500,
                         letterSpacing = 0.5.sp,
                         lineHeight = 24.sp,
                         color = Color(0xFF1C1B1F)
                     )
                 )
-                Text(
-                    text = message.text!!.body,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W400,
-                        letterSpacing = 0.25.sp,
-                        lineHeight = 20.sp,
-                        color = Color(0xFF49454F)
+                Row (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Text(
+                        text = message.lastMessage.text!!.body,
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.W400,
+                            letterSpacing = 0.25.sp,
+                            lineHeight = 20.sp,
+                            color = Color(0xFF49454F)
+                        )
                     )
-                )
+
+                    Box(
+                        modifier = Modifier
+                            .width(34.dp)
+                            .height(20.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFB3261E)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = message.nbUnreadMessaes.toString(), // message.from.uppercase()[0].toString(),
+                            style = TextStyle(
+                                fontWeight = FontWeight.W400,
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                letterSpacing = 0.25.sp,
+                                color = Color.White
+                            )
+                        )
+                    }
+                }
+
             }
         }
     }
 }
-
+// how to use Figma because I am watching you using it with Material
 fun whatsappMessageText() = """
 {
     id: 'wamid.HBgMMjM3Njc4OTA4OTg5FQIAEhggREZERDlCM0FERTZCRENGNTNFRTY4NzU3MTYxNEI0M0YA',
@@ -113,7 +141,7 @@ fun whatsappMessageText() = """
         UpdatedAt: '0001-01-01T00:00:00Z',
         DeletedAt: null,
         id: '00000000-0000-0000-0000-000000000000',
-        body: "It seems like you know how to use Figma because I am watching you using it with Material"
+        body: "It seems like you know how to use Figma do you think we can help"
     },
     image: {
         ID: 0,
@@ -146,7 +174,12 @@ fun DefaultPreview() {
         whatsappMessageText(),
         WhatsappMessage::class.java
     )
+    val messageByUser = MessagesByUser(
+        "John DOE",
+        listOf(message),
+        49
+    )
     MessageItem(
-        message
+        messageByUser
     )
 }
