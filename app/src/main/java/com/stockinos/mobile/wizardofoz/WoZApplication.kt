@@ -6,7 +6,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.gson.Gson
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
 import com.stockinos.mobile.wizardofoz.repositories.WhatsappMessageRepository
-import com.stockinos.mobile.wizardofoz.ui.MessagesViewModel
+import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModel
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter

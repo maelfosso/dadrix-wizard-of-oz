@@ -1,12 +1,14 @@
 package com.stockinos.mobile.wizardofoz.ui
 
+import android.content.Intent
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
+import com.stockinos.mobile.wizardofoz.messageByUser
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesByUser
 
@@ -30,9 +34,14 @@ fun MessageItem(
     message: MessagesByUser, // WhatsappMessage,
     modifier: Modifier = Modifier
 ) {
+    val TAG: String = "MessageItem"
+    val context = LocalContext.current
+    val conversationActivityIntent = Intent(context, ConversationActivity::class.java)
+    conversationActivityIntent.putExtra("CUSTOMER", message.user)
+
     Box(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .background(Color(0xFFFFFBFE))
             .drawBehind {
                 val borderSize = 1.dp.toPx()
@@ -43,9 +52,16 @@ fun MessageItem(
                     end = Offset(size.width, y),
                     strokeWidth = borderSize
                 )
-            }
+            }.clickable (
+                onClick = {
+                    Toast.makeText(context,"OnClick",Toast.LENGTH_LONG).show()
+                    Log.v(TAG,"OnClick ");
+                    context.startActivity(conversationActivityIntent)
+                }
+            )
     ) {
         Row(
+
             modifier = Modifier
                 .padding(
                     top = 12.dp,
@@ -170,15 +186,6 @@ fun whatsappMessageText() = """
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    val message = Gson().fromJson(
-        whatsappMessageText(),
-        WhatsappMessage::class.java
-    )
-    val messageByUser = MessagesByUser(
-        "John DOE",
-        listOf(message),
-        49
-    )
     MessageItem(
         messageByUser
     )

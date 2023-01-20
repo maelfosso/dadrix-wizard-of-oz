@@ -1,4 +1,4 @@
-package com.stockinos.mobile.wizardofoz.ui
+package com.stockinos.mobile.wizardofoz.ui.messages
 
 import android.util.Log
 import androidx.lifecycle.*

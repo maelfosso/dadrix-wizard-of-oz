@@ -1,25 +1,27 @@
 package com.stockinos.mobile.wizardofoz
 
-import android.app.Application
+
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.stockinos.mobile.wizardofoz.ui.MessagesViewModel
-import com.stockinos.mobile.wizardofoz.ui.MessagesViewModelFactory
-import com.stockinos.mobile.wizardofoz.ui.theme.MessagesScreen
+import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModel
+import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModelFactory
+import com.stockinos.mobile.wizardofoz.ui.messages.MessagesScreen
 import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +38,7 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colorScheme.background // colors.background
                 ) {
                      MessagesWidget(messagesViewModel = messagesViewModel)
                 }
@@ -53,29 +55,34 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessagesWidget(messagesViewModel: MessagesViewModel = viewModel()) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar (
-                title = {
-                    Text(
-                        text = "Messages",
-                        color = Color.White
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Filled.Menu, "ContentDescription")
-                    }
-                },
-                backgroundColor = Color.Black,
-                contentColor = Color.White,
-                elevation = 12.dp
-            )
+                 CenterAlignedTopAppBar(
+                     modifier = Modifier,
+                     title = {
+                         Text(
+                             text = "Messages",
+                             color = Color.Black
+                         )
+                     },
+                     navigationIcon = {
+                         IconButton(onClick = { /*TODO*/ }) {
+                             Icon(Icons.Filled.Menu, "ContentDescription")
+                         }
+                     },
+                 )
         },
-        content = {
-            MessagesScreen(messagesViewModel = messagesViewModel)
+        content = { innerPadding ->
+            MessagesScreen(
+                modifier = Modifier.padding(innerPadding).fillMaxSize().wrapContentSize(),
+                messagesViewModel = messagesViewModel
+            )
         }
     )
 }

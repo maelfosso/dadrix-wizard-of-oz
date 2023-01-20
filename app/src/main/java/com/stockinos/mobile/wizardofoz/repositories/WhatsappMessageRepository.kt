@@ -6,6 +6,7 @@ import com.stockinos.mobile.wizardofoz.WoZApplication
 import com.stockinos.mobile.wizardofoz.dao.WhatsappMessageDao
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class WhatsappMessageRepository(private val whatsappMessageDao: WhatsappMessageDao) {
     companion object {
@@ -25,4 +26,9 @@ class WhatsappMessageRepository(private val whatsappMessageDao: WhatsappMessageD
         val result = whatsappMessageDao.insert(message)
         Log.d(TAG, "insert : $result")
     }
+
+    fun allWhatsappMessagesAboutUser(user: String): Flow<List<WhatsappMessage>> {
+        return whatsappMessageDao.getWhatsappMessagesAboutUser(user)
+    }
+
 }

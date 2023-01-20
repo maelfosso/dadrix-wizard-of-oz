@@ -1,19 +1,15 @@
-package com.stockinos.mobile.wizardofoz.ui
+package com.stockinos.mobile.wizardofoz.ui.messages
 
 import android.util.Log
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
-import com.stockinos.mobile.wizardofoz.ui.messages.MessagesByUser
-import com.stockinos.mobile.wizardofoz.ui.theme.MessagesScreen
+import com.stockinos.mobile.wizardofoz.ui.MessageItem
 
 @Composable
 fun MessagesList(
@@ -23,7 +19,8 @@ fun MessagesList(
     val messages by messagesLiveData.observeAsState(initial = emptyList())
     Log.i("MessagesList", "Count Messages ${messagesLiveData.value?.size.toString()}")
     LazyColumn(
-        modifier = modifier
+        modifier = modifier,
+        verticalArrangement = Arrangement.Top
     ) {
         items(
             items = messages,

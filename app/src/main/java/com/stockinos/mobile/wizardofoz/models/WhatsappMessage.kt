@@ -3,8 +3,10 @@ package com.stockinos.mobile.wizardofoz.models
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import java.util.*
 
 @Entity(tableName = "whatsapp_messages")
 data class WhatsappMessage (
@@ -37,6 +39,9 @@ data class WhatsappMessage (
 ) {
     var state: String? = "unread"
         get() = field ?: "unread"
+
+    @Ignore
+    var receivedDate: Date = Date(timestamp.toLong())
 }
 
 @Entity(tableName = "whatsapp_messages_texts")
