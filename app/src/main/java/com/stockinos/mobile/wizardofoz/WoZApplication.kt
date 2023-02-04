@@ -6,16 +6,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.gson.Gson
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
 import com.stockinos.mobile.wizardofoz.repositories.WhatsappMessageRepository
+import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationUiState
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModel
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.*
 import org.json.JSONObject
 import java.net.URISyntaxException
 
@@ -32,7 +30,7 @@ class WoZApplication: Application() {
     val repository by lazy { WhatsappMessageRepository(database.whatsappMessageDao()) }
 
 
-    private var mSocket: Socket? = null
+    private var _mSocket: Socket? = null
         get() {
             if (field == null) {
                 try {
@@ -46,7 +44,7 @@ class WoZApplication: Application() {
 
             return field
         }
-
+    val mSocket: Socket = _mSocket!!
 
     private var onWhatsappMessageReceived = Emitter.Listener {
         Log.d(TAG, "on whatsapp:message:received before : ${it[0]}")
@@ -58,10 +56,10 @@ class WoZApplication: Application() {
     }
 
     fun connectSocket() {
-        Log.i(TAG, "connectSocket() - ${mSocket == null}")
+        Log.i(TAG, "connectSocket() - ${_mSocket == null}")
 
-        mSocket?.on("whatsapp:message:received", onWhatsappMessageReceived)
-        mSocket?.connect()
+        _mSocket?.on("whatsapp:message:received", onWhatsappMessageReceived)
+        _mSocket?.connect()
             ?.on(Socket.EVENT_CONNECT) {
                 Log.i(TAG, "connected")
 
@@ -72,11 +70,11 @@ class WoZApplication: Application() {
     }
 
     fun disconnectSocket() {
-        mSocket?.disconnect()
+        _mSocket?.disconnect()
     }
 
     fun emitNotice(msg: String) {
-        mSocket?.emit("notice", msg)
+        _mSocket?.emit("notice", msg)
     }
     private fun setupSocket() {
         Log.i(TAG, "setupSocket")

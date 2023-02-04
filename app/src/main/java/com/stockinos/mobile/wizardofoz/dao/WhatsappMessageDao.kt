@@ -13,7 +13,7 @@ interface WhatsappMessageDao {
     @Query("SELECT * FROM whatsapp_messages")
     fun getWhatsappMessages(): Flow<List<WhatsappMessage>>
 
-    @Query("SELECT * FROM whatsapp_messages WHERE `from` = :user ORDER BY timestamp DESC")
+    @Query("SELECT * FROM whatsapp_messages WHERE `from` = :user OR `to` = :user ORDER BY timestamp DESC")
     fun getWhatsappMessagesAboutUser(user: String): Flow<List<WhatsappMessage>>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)

@@ -29,7 +29,11 @@ class ConversationActivity : ComponentActivity() {
         val currentUser = currentIntent.getStringExtra("CUSTOMER")
 
         val conversationViewModel: ConversationViewModel by viewModels {
-            ConversationViewModelFactory((application as WoZApplication).repository, currentUser!!)
+            ConversationViewModelFactory(
+                (application as WoZApplication).repository,
+                (application as WoZApplication).mSocket,
+                currentUser!!
+            )
         }
 
         setContent {

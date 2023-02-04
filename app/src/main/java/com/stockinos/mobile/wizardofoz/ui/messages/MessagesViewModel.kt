@@ -15,6 +15,7 @@ class MessagesViewModel(private val repository: WhatsappMessageRepository): View
 
     val allMessagesByUser: LiveData<List<MessagesByUser>> = allMessages.map { it ->
         it.groupBy { it.from }
+            .filter { (from, messages) -> from != "inner" }
             .mapValues { (from, messages) ->
                 MessagesByUser(
                     from,

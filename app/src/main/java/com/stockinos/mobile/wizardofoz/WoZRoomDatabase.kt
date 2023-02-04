@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
         WhatsappMessageImage::class,
         WhatsappMessageAudio::class
     ),
-    version = 2,
+    version = 4,
     exportSchema = true
 )
 public abstract class WoZRoomDatabase: RoomDatabase() {

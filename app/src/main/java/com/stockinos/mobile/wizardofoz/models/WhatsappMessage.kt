@@ -16,6 +16,8 @@ data class WhatsappMessage (
     val id: String,
     @SerializedName("from")
     val from: String,
+    @SerializedName("to")
+    val to: String? = null,
     @SerializedName("timestamp")
     val timestamp: String,
 
@@ -37,8 +39,8 @@ data class WhatsappMessage (
     @SerializedName("audio")
     @Embedded val audio: WhatsappMessageAudio? = null,
 ) {
-    var state: String? = "unread"
-        get() = field ?: "unread"
+    var state: String? = "unknown"
+        get() = field ?: "unknown"
 
     @Ignore
     var receivedDate: Date = Date(timestamp.toLong())

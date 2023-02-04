@@ -56,4 +56,4 @@ val messageByUser = MessagesByUser(
 
 val messages = listOf(message)
 
-val exampleConversationUiState = ConversationUiState(messagesItems = messages)
+val exampleConversationUiState = ConversationUiState(messagesItems = messages, user = "inner")

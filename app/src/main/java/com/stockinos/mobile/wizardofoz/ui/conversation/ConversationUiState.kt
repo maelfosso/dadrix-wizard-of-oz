@@ -7,5 +7,6 @@ import androidx.lifecycle.LiveData
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
 
 data class ConversationUiState(
-    val messagesItems: List<WhatsappMessage> = listOf()
+    val messagesItems: List<WhatsappMessage> = listOf(),
+    val user: String
 )
