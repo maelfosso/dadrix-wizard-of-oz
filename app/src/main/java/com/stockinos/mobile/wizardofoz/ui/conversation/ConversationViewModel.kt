@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.stockinos.mobile.wizardofoz.WoZApplication
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
 import com.stockinos.mobile.wizardofoz.models.MessageWoZSentData
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessageText
 import com.stockinos.mobile.wizardofoz.repositories.WhatsappMessageRepository
+import io.socket.client.Ack
 import io.socket.client.Socket
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -34,53 +36,34 @@ class ConversationViewModel(
     private var fetchJob: Job? = null
 
     init {
-        fetchJob?.cancel()
-        fetchJob = viewModelScope.launch {
+        viewModelScope.launch {
             repository.allWhatsappMessagesAboutUser(user).collect() { messages ->
-                _uiState.update { it -> it.copy(messagesItems = messages) }
+                _uiState.update { it.copy(messagesItems = messages) }
             }
         }
     }
 
     fun sendMessage(text: String) {
         Log.d(TAG, "sendMessage : $text")
-        val id = (Date().time / 1000).toString()
-        val textId = UUID.randomUUID().toString()
-        val message = WhatsappMessage(
-            id = id,
-            from = "inner",
-            to = user,
-            timestamp = id,
-
-            type = "text",
-            textId = textId,
-            text = WhatsappMessageText(
-                id = textId,
-                body = text
-            )
+        val message = mapOf<String, String>(
+            "from" to "inner",
+            "to" to user,
+            "message" to text
         )
 
-        fetchJob?.cancel()
-        fetchJob = viewModelScope.launch(Dispatchers.IO + NonCancellable) {
-            repository.insert(message)
+        // fetchJob?.cancel()
+        // fetchJob =
+        viewModelScope.launch(Dispatchers.IO + NonCancellable) {
             socket.emit(
                 "whatsapp:message:woz:sent",
-                Gson().toJson(message)
-            )
-        }
-    }
-
-    fun fetchMessages() {
-        fetchJob?.cancel()
-        fetchJob = viewModelScope.launch {
-            try {
-                val items = repository.allWhatsappMessages // all messages related to an user
-                _uiState.update {
-                    it.copy(messagesItems = items.first())
+                Gson().toJson(message),
+                Ack {
+                    Log.d("Send Message Text", it[0].toString())
+                    val data = Gson().fromJson(it[0].toString(), WhatsappMessage::class.java)
+                    Log.d("Send Message Text", "on whatsapp:message:received : $data")
+                    repository.insert(data)
                 }
-            } catch (ioe: IOException) {
-                Log.d(TAG, ioe.message.toString())
-            }
+            )
         }
     }
 }

@@ -24,7 +24,7 @@ data class WhatsappMessage (
     @SerializedName("type")
     val type: String,
 
-    @SerializedName("text_id")
+    @SerializedName("text_id", alternate = ["textid", "textId"])
     val textId: String? = null,
     @SerializedName("text")
     @Embedded val text: WhatsappMessageText? = null,
