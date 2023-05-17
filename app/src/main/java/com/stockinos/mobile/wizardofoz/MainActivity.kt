@@ -19,6 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
+import com.stockinos.mobile.wizardofoz.navigation.Navigation
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModel
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModelFactory
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesScreen
@@ -34,14 +36,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            WizardOfOzTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background // colors.background
-                ) {
-                     MessagesWidget(messagesViewModel = messagesViewModel)
-                }
+            BaseView {
+                val navController = rememberNavController()
+                Navigation(navController = navController)
             }
         }
 
@@ -52,6 +49,22 @@ class MainActivity : ComponentActivity() {
         val app = this.application as WoZApplication
         app.disconnectSocket()
         super.onDestroy()
+    }
+}
+
+@Composable
+fun BaseView(
+    content: @Composable () -> Unit
+) {
+    WizardOfOzTheme {
+        // A surface container using the 'background' color from the theme
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background // colors.background
+        ) {
+            // MessagesWidget(messagesViewModel = messagesViewModel)
+            content()
+        }
     }
 }
 
@@ -80,7 +93,10 @@ fun MessagesWidget(messagesViewModel: MessagesViewModel = viewModel()) {
         },
         content = { innerPadding ->
             MessagesScreen(
-                modifier = Modifier.padding(innerPadding).fillMaxSize().wrapContentSize(),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .wrapContentSize(),
                 messagesViewModel = messagesViewModel
             )
         }

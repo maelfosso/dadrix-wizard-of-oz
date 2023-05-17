@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Wizard of Oz</string>
     <string name="title_activity_conversation">ConversationActivity</string>
+    <string name="title_activity_sign_in">SignInActivity</string>
 </resources>

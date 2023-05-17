@@ -18,7 +18,7 @@ import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationScreen
 import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationUiState
 import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationViewModel
 import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationViewModelFactory
-import com.stockinos.mobile.wizardofoz.ui.ui.theme.WizardOfOzTheme
+import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
 
 class ConversationActivity : ComponentActivity() {
 
