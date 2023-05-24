@@ -2,24 +2,31 @@ package com.stockinos.mobile.wizardofoz
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.gson.Gson
+import com.stockinos.mobile.wizardofoz.api.WoZAPI
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
-import com.stockinos.mobile.wizardofoz.repositories.WhatsappMessageRepository
-import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationUiState
-import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModel
+import com.stockinos.mobile.wizardofoz.dao.WhatsappMessageDao
+import com.stockinos.mobile.wizardofoz.repositories.AuthRepository
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.*
-import org.json.JSONObject
 import java.net.URISyntaxException
 
 class WoZApplication: Application() {
     companion object {
         private val TAG = WoZApplication::class.simpleName
+
+        private lateinit var appInstance: WoZApplication
+        fun getAppInstance(): WoZApplication {
+            return appInstance
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        appInstance = this
     }
 
     // No need to cancel this scope as it'll be torn down with the process
@@ -27,8 +34,8 @@ class WoZApplication: Application() {
     // Using by lazy so the database and the repository are only created when they're need
     // rather than when the application starts
     private val database by lazy { WoZRoomDatabase.getDatabase(this, applicationScope) }
-    val repository by lazy { WhatsappMessageRepository(database.whatsappMessageDao()) }
-
+    val whatsappMessageDao by lazy { WhatsappMessageDao(database.whatsappMessageDao()) }
+    val authRepository by lazy { AuthRepository(WoZAPI.getInstance()) }
 
     private var _mSocket: Socket? = null
         get() {
@@ -51,7 +58,7 @@ class WoZApplication: Application() {
         val data = Gson().fromJson(it[0].toString(), WhatsappMessage::class.java)
         Log.d(TAG, "on whatsapp:message:received : $data")
 
-        repository.insert(data)
+        whatsappMessageDao.insert(data)
 //        Log.d(TAG, "NB Items : ${repository.allWhatsappMessages.count()}")
     }
 

@@ -1,12 +1,10 @@
 package com.stockinos.mobile.wizardofoz
 
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -29,7 +27,7 @@ import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
 class MainActivity : ComponentActivity() {
 
     private val messagesViewModel: MessagesViewModel by viewModels {
-        MessagesViewModelFactory((application as WoZApplication).repository)
+        MessagesViewModelFactory((application as WoZApplication).whatsappMessageDao)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

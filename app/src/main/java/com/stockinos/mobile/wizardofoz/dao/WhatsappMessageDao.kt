@@ -1,21 +1,30 @@
 package com.stockinos.mobile.wizardofoz.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import android.util.Log
+import androidx.annotation.WorkerThread
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
-import com.stockinos.mobile.wizardofoz.ui.messages.MessagesByUser
 import kotlinx.coroutines.flow.Flow
 
-@Dao
-interface WhatsappMessageDao {
-    @Query("SELECT * FROM whatsapp_messages")
-    fun getWhatsappMessages(): Flow<List<WhatsappMessage>>
+class WhatsappMessageDao(private val whatsappMessageDao: IWhatsappMessageDao) {
+    companion object {
+        private val TAG = WhatsappMessageDao::class.simpleName
+    }
+    // Room executes all queries on a separate thread.
+    // Observed Flow will notify the observer when the data has changed
+    val allWhatsappMessages: Flow<List<WhatsappMessage>> = whatsappMessageDao.getWhatsappMessages()
 
-    @Query("SELECT * FROM whatsapp_messages WHERE `from` = :user OR `to` = :user ORDER BY timestamp DESC")
-    fun getWhatsappMessagesAboutUser(user: String): Flow<List<WhatsappMessage>>
+    // By default Room runs suspend queries off the main thread, therefore, we don't need to
+    // implement anything else to ensure we're not doing long running database work
+    // off the main work
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    fun insert(message: WhatsappMessage) {
+        val result = whatsappMessageDao.insert(message)
+        Log.d(TAG, "insert : $result")
+    }
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    fun insert(message: WhatsappMessage): Long
+    fun allWhatsappMessagesAboutUser(user: String): Flow<List<WhatsappMessage>> {
+        return whatsappMessageDao.getWhatsappMessagesAboutUser(user)
+    }
+
 }

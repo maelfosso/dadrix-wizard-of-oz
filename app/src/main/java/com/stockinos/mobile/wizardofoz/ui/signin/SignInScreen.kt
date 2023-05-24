@@ -1,19 +1,16 @@
 package com.stockinos.mobile.wizardofoz.ui.signin
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,8 +24,11 @@ import com.stockinos.mobile.wizardofoz.utils.secondaryTextStyle
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignInScreen(navController: NavController) {
-    var phoneNumber by remember { mutableStateOf(TextFieldValue("")) }
+fun SignInScreen(
+    navController: NavController,
+    signInViewModel: SignInViewModel
+) {
+    val signInUiState by signInViewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -44,12 +44,12 @@ fun SignInScreen(navController: NavController) {
                     //     )
                     // }
                 },
-
             )
         },
         content = {
             Box(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier
+                    .padding(16.dp)
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
@@ -70,9 +70,13 @@ fun SignInScreen(navController: NavController) {
                             TextField(
                                 modifier = Modifier
                                     .fillMaxWidth(),
-                                value = phoneNumber,
+                                value = signInUiState.phoneNumber,
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Phone
+                                ),
                                 onValueChange = {
-                                    phoneNumber = it
+                                    signInViewModel.handlePhoneNumberChanges(it)
                                 }
                             )
                             26.height()
@@ -80,7 +84,14 @@ fun SignInScreen(navController: NavController) {
                                 modifier = Modifier
                                     .fillMaxWidth(),
                                 onClick = {
-                                    navController.navigate(Routes.SignInOTP.route)
+                                    signInViewModel.signIn(
+                                        onSuccess = { phoneNumber ->
+                                            Log.d("SignInScreen", "onSuccess : $phoneNumber - ${Routes.SignInOTP.route + "/$phoneNumber"}")
+                                            navController.navigate(
+                                                Routes.SignInOTP.route + "/$phoneNumber"
+                                            )
+                                        }
+                                    )
                                 }
                             ) {
                                 Text(

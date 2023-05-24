@@ -5,11 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
-import com.stockinos.mobile.wizardofoz.WoZApplication
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
-import com.stockinos.mobile.wizardofoz.models.MessageWoZSentData
-import com.stockinos.mobile.wizardofoz.models.WhatsappMessageText
-import com.stockinos.mobile.wizardofoz.repositories.WhatsappMessageRepository
+import com.stockinos.mobile.wizardofoz.dao.WhatsappMessageDao
 import io.socket.client.Ack
 import io.socket.client.Socket
 import kotlinx.coroutines.Dispatchers
@@ -17,12 +14,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.io.IOException
-import java.util.Date
-import java.util.UUID
 
 class ConversationViewModel(
-    private val repository: WhatsappMessageRepository,
+    private val repository: WhatsappMessageDao,
     private val socket: Socket,
     private val user: String
 ): ViewModel() {
@@ -69,7 +63,7 @@ class ConversationViewModel(
 }
 
 class ConversationViewModelFactory(
-    private val repository: WhatsappMessageRepository,
+    private val repository: WhatsappMessageDao,
     private val socket: Socket,
     private val user: String
 ): ViewModelProvider.Factory {

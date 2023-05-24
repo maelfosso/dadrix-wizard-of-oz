@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.stockinos.mobile.wizardofoz.dao.IWhatsappMessageDao
 import com.stockinos.mobile.wizardofoz.dao.WhatsappMessageDao
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessageAudio
@@ -24,7 +25,7 @@ import kotlinx.coroutines.launch
     exportSchema = true
 )
 public abstract class WoZRoomDatabase: RoomDatabase() {
-    abstract fun whatsappMessageDao(): WhatsappMessageDao
+    abstract fun whatsappMessageDao(): IWhatsappMessageDao
 
 
     private class WozDatabaseCallback(
@@ -44,7 +45,7 @@ public abstract class WoZRoomDatabase: RoomDatabase() {
             }
         }
 
-        fun populateDatabase(whatsappMessageDao: WhatsappMessageDao) {
+        fun populateDatabase(whatsappMessageDao: IWhatsappMessageDao) {
             // Delete all content here
             // whatsappMessageDao.deleteAll()
 

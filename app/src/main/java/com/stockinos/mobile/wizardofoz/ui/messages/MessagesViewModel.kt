@@ -1,14 +1,12 @@
 package com.stockinos.mobile.wizardofoz.ui.messages
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
-import com.stockinos.mobile.wizardofoz.repositories.WhatsappMessageRepository
-import com.stockinos.mobile.wizardofoz.ui.messages.MessagesByUser
+import com.stockinos.mobile.wizardofoz.dao.WhatsappMessageDao
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class MessagesViewModel(private val repository: WhatsappMessageRepository): ViewModel() {
+class MessagesViewModel(private val repository: WhatsappMessageDao): ViewModel() {
 
     val allMessages: LiveData<List<WhatsappMessage>> = repository.allWhatsappMessages
         .asLiveData()
@@ -31,7 +29,7 @@ class MessagesViewModel(private val repository: WhatsappMessageRepository): View
 
 }
 
-class MessagesViewModelFactory(private val repository: WhatsappMessageRepository): ViewModelProvider.Factory {
+class MessagesViewModelFactory(private val repository: WhatsappMessageDao): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MessagesViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

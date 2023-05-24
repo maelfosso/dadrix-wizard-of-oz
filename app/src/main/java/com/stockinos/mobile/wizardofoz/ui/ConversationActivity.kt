@@ -8,14 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.stockinos.mobile.wizardofoz.WoZApplication
 import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationScreen
-import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationUiState
 import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationViewModel
 import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationViewModelFactory
 import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
@@ -30,7 +27,7 @@ class ConversationActivity : ComponentActivity() {
 
         val conversationViewModel: ConversationViewModel by viewModels {
             ConversationViewModelFactory(
-                (application as WoZApplication).repository,
+                (application as WoZApplication).whatsappMessageDao,
                 (application as WoZApplication).mSocket,
                 currentUser!!
             )

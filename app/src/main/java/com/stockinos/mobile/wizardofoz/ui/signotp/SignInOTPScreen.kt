@@ -7,11 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -22,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import com.stockinos.mobile.wizardofoz.navigation.Routes
 import com.stockinos.mobile.wizardofoz.utils.*
@@ -29,7 +26,12 @@ import com.stockinos.mobile.wizardofoz.utils.*
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignInOTPScreen(navController: NavController) {
+fun SignInOTPScreen(
+    navController: NavController,
+    signInOTPViewModel: SignInOTPViewModel
+) {
+    val signInOTPUiState by signInOTPViewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -46,9 +48,10 @@ fun SignInOTPScreen(navController: NavController) {
                 }
             )
         },
-        content = {
+        content = { it ->
             Box(
-                modifier = Modifier.padding(it)
+                modifier = Modifier
+                    .padding(it)
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
@@ -74,7 +77,9 @@ fun SignInOTPScreen(navController: NavController) {
                             24.height()
                             OTPCodeTextFields(
                                 modifier = Modifier.fillMaxWidth(),
-                                onFilled = {}
+                                onFilled = { code ->
+                                    signInOTPViewModel.handlePinCodeFilled(code)
+                                }
                             )
                             32.height()
                             Text(
@@ -97,7 +102,9 @@ fun SignInOTPScreen(navController: NavController) {
                                 modifier = Modifier
                                     .fillMaxWidth(),
                                 onClick = {
-                                    navController.navigate(Routes.Home.route)
+                                    signInOTPViewModel.checkOTP {
+                                        navController.navigate(Routes.Home.route)
+                                    }
                                 },
                                 content = {
                                     Text(
