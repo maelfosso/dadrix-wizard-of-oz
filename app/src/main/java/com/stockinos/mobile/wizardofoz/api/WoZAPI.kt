@@ -31,5 +31,5 @@ interface WoZAPI {
     @POST("/auth/otp/check")
     suspend fun checkOTP(@Body checkOTPRequest: CheckOTPRequest)
     @POST("/auth/otp/resend")
-    suspend fun resendOTP()
+    suspend fun resendOTP(@Body getOTPRequest: GetOTPRequest)
 }

@@ -2,6 +2,7 @@ package com.stockinos.mobile.wizardofoz.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -13,6 +14,8 @@ import com.stockinos.mobile.wizardofoz.ui.signin.SignInScreen
 import com.stockinos.mobile.wizardofoz.ui.signin.SignInViewModel
 import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPScreen
 import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPViewModel
+import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPViewModelFactory
+import androidx.activity.viewModels
 
 @Composable
 fun Navigation(navController: NavHostController) {
@@ -20,12 +23,9 @@ fun Navigation(navController: NavHostController) {
 
     NavHost(navController = navController, startDestination = Routes.SignIn.route) {
         composable(route = Routes.SignIn.route) {
-            val signInViewModel = SignInViewModel(
-                authRepository = WoZApplication.getAppInstance().authRepository
-            )
             SignInScreen(
                 navController = navController,
-                signInViewModel = signInViewModel
+                signInViewModel = viewModel(factory = SignInOTPViewModel.Factory)
             )
         }
         composable(
@@ -33,15 +33,10 @@ fun Navigation(navController: NavHostController) {
             arguments = listOf(
                 navArgument("phoneNumber") { type = NavType.StringType }
             )
-        ) { backStackEntry ->
-            // Log.d(TAG, )
-            val signInOTPViewModel = SignInOTPViewModel(
-                savedStateHandle = backStackEntry.savedStateHandle,
-                authRepository = WoZApplication.getAppInstance().authRepository
-            )
+        ) {
             SignInOTPScreen(
                 navController = navController,
-                signInOTPViewModel = signInOTPViewModel
+                signInOTPViewModel = viewModel(factory = SignInOTPViewModel.Factory)
             )
         }
         composable(route = Routes.Home.route) {

@@ -3,11 +3,16 @@ package com.stockinos.mobile.wizardofoz.ui.signin
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.stockinos.mobile.wizardofoz.WoZApplication
 import com.stockinos.mobile.wizardofoz.api.models.requests.GetOTPRequest
 import com.stockinos.mobile.wizardofoz.dao.WhatsappMessageDao
 import com.stockinos.mobile.wizardofoz.repositories.AuthRepository
 import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationViewModel
+import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPViewModel
 import io.socket.client.Socket
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -18,6 +23,15 @@ class SignInViewModel(
 ): ViewModel() {
     companion object {
         private val TAG = SignInViewModel::class.java.name
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                // val savedStateHandle = createSavedStateHandle()
+                SignInViewModel(
+                    authRepository = WoZApplication.getAppInstance().authRepository,
+                    // savedStateHandle = savedStateHandle
+                )
+            }
+        }
     }
 
     private val _uiState = MutableStateFlow(SignInUiState())
