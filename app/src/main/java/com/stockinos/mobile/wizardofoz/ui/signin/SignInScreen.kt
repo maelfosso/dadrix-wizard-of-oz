@@ -14,10 +14,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.stockinos.mobile.wizardofoz.models.GetError
 import com.stockinos.mobile.wizardofoz.navigation.Routes
 import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
 import com.stockinos.mobile.wizardofoz.utils.boldTextStyle
+import com.stockinos.mobile.wizardofoz.utils.errorTextStyle
 import com.stockinos.mobile.wizardofoz.utils.height
 import com.stockinos.mobile.wizardofoz.utils.secondaryTextStyle
 
@@ -34,75 +38,30 @@ fun SignInScreen(
         topBar = {
             TopAppBar(
                 title = {},
-                navigationIcon = {
-                    // IconButton(onClick = { navController.popBackStack() } ) {
-                    //     Icon(
-                    //         imageVector = Icons.Filled.ArrowBack,
-                    //         contentDescription = null,
-                    //         modifier = Modifier.padding(horizontal = 8.dp),
-                    //         tint = MaterialTheme.colorScheme.primary
-                    //     )
-                    // }
-                },
+                navigationIcon = {},
             )
         },
         content = {
             Box(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(it)
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                LazyColumn(
-                    modifier = Modifier.padding(it),
-                    content = {
-                        item {
-                            Text(
-                                "Easy to learn,\ndiscover more\nskills",
-                                style = boldTextStyle(fontSize = 24.sp)
-                            )
-                            10.height()
-                            Text(
-                                "Sign in to your account",
-                                style = secondaryTextStyle(fontSize = 16.sp)
-                            )
-                            24.height()
-                            TextField(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                value = signInUiState.phoneNumber,
-                                singleLine = true,
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Phone
-                                ),
-                                onValueChange = {
-                                    signInViewModel.handlePhoneNumberChanges(it)
-                                }
-                            )
-                            26.height()
-                            Button(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                onClick = {
-                                    signInViewModel.signIn(
-                                        onSuccess = { phoneNumber ->
-                                            Log.d("SignInScreen", "onSuccess : $phoneNumber - ${Routes.SignInOTP.route + "/$phoneNumber"}")
-                                            navController.navigate(
-                                                Routes.SignInOTP.route + "/$phoneNumber"
-                                            )
-                                        }
-                                    )
-                                }
-                            ) {
-                                Text(
-                                    modifier = Modifier.padding(8.dp),
-                                    text = "Sign In",
-                                    style = boldTextStyle(
-                                        color = Color.White
-                                    )
+                SignInScreenContent(
+                    signInUiState,
+                    onPhoneNumberChange = { phoneNumber ->
+                        signInViewModel.handlePhoneNumberChanges(phoneNumber)
+                    },
+                    onSignIn = {
+                        signInViewModel.signIn(
+                            onSuccess = { phoneNumber ->
+                                Log.d("SignInScreen", "onSuccess : $phoneNumber - ${Routes.SignInOTP.route + "/$phoneNumber"}")
+                                navController.navigate(
+                                    Routes.SignInOTP.route + "/$phoneNumber"
                                 )
                             }
-                        }
+                        )
                     }
                 )
             }
@@ -110,31 +69,83 @@ fun SignInScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VerifyOTPScreen(phoneNumber: String) {
-    Column {
-        Text(
-            text = "Please enter the 6-digit verification code that was sent to $phoneNumber. The code is valid for 30 minutes"
-        )
-
-        Column {
-            Text(text = "Verification code - OTP")
-            TextField(
-                value = "",
-                onValueChange = {},
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-        }
-
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "Verify code")
-        }
-
-        Column {
-            TextButton(onClick = { /*TODO*/ }) {
-                Text(text = "Resend the code")
+fun SignInScreenContent(
+    signInUiState: SignInUiState,
+    onPhoneNumberChange: (phoneNumber: String) -> Unit,
+    onSignIn: () -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.padding(
+            start = 16.dp,
+            end = 16.dp,
+            top = 8.dp,
+            bottom = 16.dp
+        ),
+        content = {
+            item {
+                Text(
+                    "Easy to learn,\ndiscover more\nskills",
+                    style = boldTextStyle(fontSize = 24.sp)
+                )
+                10.height()
+                Text(
+                    "Sign in to your account",
+                    style = secondaryTextStyle(fontSize = 16.sp)
+                )
+                24.height()
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    value = signInUiState.phoneNumber,
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Phone
+                    ),
+                    onValueChange = {
+                        onPhoneNumberChange(it)
+                    }
+                )
+                26.height()
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    onClick = {
+                        onSignIn()
+                    }
+                ) {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        text = "Sign In",
+                        style = boldTextStyle(
+                            color = Color.White
+                        )
+                    )
+                }
             }
+        }
+    )
+}
+
+val getErrors: Map<String, GetError> = mapOf(
+    "UNKNOWN" to GetError(message = "an unknown error happens, kindly restart the app and try again"),
+    "ERR_COTP_150" to GetError(message = "error when sending the OTP via WhatsApp"), // Nothing To Do - No Action Needed NAN
+    "ERR_COTP_151" to GetError(message = "error when creating the user account", cta = "Try again"),
+    "ERR_COTP_152" to GetError(message = "error when saving the generated OTP"), // NAN
+)
+
+@Composable
+fun Error(error: String) {
+    if (error.isNotBlank() || error.isNotEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            8.height()
+            Text(
+                com.stockinos.mobile.wizardofoz.ui.signotp.getErrors[error]!!.message,
+                style = errorTextStyle() // (fontSize = 16.sp)
+            )
+            24.height()
         }
     }
 }
@@ -143,6 +154,9 @@ fun VerifyOTPScreen(phoneNumber: String) {
 @Composable
 fun AuthScreenPreview() {
     WizardOfOzTheme {
-        VerifyOTPScreen("689234322")
+        SignInScreen(
+            navController = rememberNavController(),
+            signInViewModel = viewModel(factory = SignInViewModel.Factory)
+        )
     }
 }

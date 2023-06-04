@@ -95,3 +95,31 @@ fun secondaryTextStyle(
         lineHeight = lineHeight
     )
 }
+
+@Composable
+fun errorTextStyle(
+    color: Color = Color.Red,
+    fontSize: TextUnit = Size.textSecondarySizeGlobal,
+    fontWeight: FontWeight? = Style.fontWeightSecondaryGlobal,
+    fontStyle: FontStyle? = FontStyle.Normal,
+    // fontFamily: FontFamily? = FontFamily
+    letterSpacing: TextUnit = TextUnit.Unspecified,
+    background: Color = Color.Unspecified,
+    textDecoration: TextDecoration? = TextDecoration.None,
+    textAlign: TextAlign? = TextAlign.Start,
+    textDirection: TextDirection? = null,
+    lineHeight: TextUnit = TextUnit.Unspecified
+): TextStyle {
+    return TextStyle(
+        color = color,
+        fontSize = fontSize,
+        fontWeight = fontWeight,
+        fontStyle = fontStyle,
+        letterSpacing = letterSpacing,
+        background = background,
+        textAlign = textAlign,
+        textDecoration = textDecoration,
+        textDirection = textDirection,
+        lineHeight = lineHeight
+    )
+}

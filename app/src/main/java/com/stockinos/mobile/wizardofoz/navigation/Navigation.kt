@@ -14,8 +14,6 @@ import com.stockinos.mobile.wizardofoz.ui.signin.SignInScreen
 import com.stockinos.mobile.wizardofoz.ui.signin.SignInViewModel
 import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPScreen
 import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPViewModel
-import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPViewModelFactory
-import androidx.activity.viewModels
 
 @Composable
 fun Navigation(navController: NavHostController) {
@@ -25,7 +23,7 @@ fun Navigation(navController: NavHostController) {
         composable(route = Routes.SignIn.route) {
             SignInScreen(
                 navController = navController,
-                signInViewModel = viewModel(factory = SignInOTPViewModel.Factory)
+                signInViewModel = viewModel(factory = SignInViewModel.Factory)
             )
         }
         composable(

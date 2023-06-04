@@ -63,33 +63,34 @@ class SignInViewModel(
             authRepository.getOTP(body)
                 .flowOn(Dispatchers.IO)
                 .catch {
-                    Log.d(TAG, "error when getting OTP", it)
+                    Log.d(TAG, "error when getting OTP: ${it.message}", it)
                 }
-                .collect {
+                .collect { response ->
                     Log.d(TAG, "auth successful")
+                    if (response.isSuccessful) {
+                        onSuccess(currentPhoneNumber)
 
-                    onSuccess(currentPhoneNumber)
-                    _uiState.update {
-                        it.copy(
-                            isSignIn = false
-                        )
+                        _uiState.update {
+                            it.copy(
+                                isSignIn = false
+                            )
+                        }
+                    } else {
+                        var error = response.errorBody()!!.string().trim()
+                        Log.d(TAG, "ERROR!!! : $error")
+
+                        // check if the error is different than the ones from API
+                        if (!error.startsWith("ERR")) {
+                            error = "UNKNOWN"
+                        }
+                        Log.d(TAG, "ERROR!!! 2x : $error")
+                        _uiState.update {
+                            it.copy(
+                                error = error
+                            )
+                        }
                     }
                 }
         }
     }
 }
-
-// class SignInViewModelFactory(
-//     // private val repository: WhatsappMessageDao,
-//     // private val socket: Socket,
-//     // private val user: String
-// ): ViewModelProvider.Factory {
-//     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//         if (modelClass.isAssignableFrom(SignInViewModel::class.java)) {
-//             @Suppress("UNCHECKED_CAST")
-//             return SignInViewModel() as T // (repository, socket, user) as T
-//         }
-//
-//         throw IllegalArgumentException("Unknown ViewModel Class")
-//     }
-// }

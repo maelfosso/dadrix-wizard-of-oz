@@ -68,30 +68,45 @@ class SignInOTPViewModel(
             authRepository.checkOTP(body)
                 .flowOn(Dispatchers.IO)
                 .catch {
-                    Log.d(TAG, "error when checking OTP", it)
-                }
-                .collect {
-                    Log.d(TAG, "checking successful")
+                    Log.d(TAG, "error when checking OTP: ${it.message}", it)
+                    var error = it.message
 
-                    onSuccess()
-                    _uiState.update {
-                        it.copy(
-                            isChecking = false
+                    // check if the error is different than the ones from API
+                    if (error?.startsWith("ERR") == false) {
+                        error = "UNKNOWN"
+                    }
+                    _uiState.update { state ->
+                        state.copy(
+                            error = error!!
                         )
+                    }
+                }
+                .collect { response ->
+                    Log.d(TAG, "checking successful: $response")
+
+                    if (response.isSuccessful) {
+                        onSuccess()
+                        _uiState.update {
+                            it.copy(
+                                isChecking = false
+                            )
+                        }
+                    } else {
+                        var error = response.errorBody()!!.string().trim()
+                        Log.d(TAG, "ERROR!!! : $error")
+
+                        // check if the error is different than the ones from API
+                        if (!error.startsWith("ERR")) {
+                            error = "UNKNOWN"
+                        }
+                        Log.d(TAG, "ERROR!!! 2x : $error")
+                        _uiState.update {
+                            it.copy(
+                                error = error
+                            )
+                        }
                     }
                 }
         }
     }
-}
-
-class SignInOTPViewModelFactory(owner: SavedStateRegistryOwner,
-                         private val authRepository: AuthRepository,
-                         defaultArgs: Bundle? = null
-) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
-
-    override fun <T : ViewModel?> create(
-        key: String,
-        modelClass: Class<T>,
-        handle: SavedStateHandle
-    ): T = SignInOTPViewModel(handle, authRepository) as T
 }
