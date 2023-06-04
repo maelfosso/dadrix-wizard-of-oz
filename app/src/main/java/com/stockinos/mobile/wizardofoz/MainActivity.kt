@@ -17,11 +17,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.stockinos.mobile.wizardofoz.navigation.Navigation
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModel
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModelFactory
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesScreen
+import com.stockinos.mobile.wizardofoz.ui.messages.MessagesScreenContent
 import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
 
 class MainActivity : ComponentActivity() {
@@ -68,7 +70,10 @@ fun BaseView(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessagesWidget(messagesViewModel: MessagesViewModel = viewModel()) {
+fun MessagesWidget(
+    navController: NavController,
+    messagesViewModel: MessagesViewModel = viewModel()
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
@@ -90,11 +95,12 @@ fun MessagesWidget(messagesViewModel: MessagesViewModel = viewModel()) {
                  )
         },
         content = { innerPadding ->
-            MessagesScreen(
+            MessagesScreenContent(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
                     .wrapContentSize(),
+                navController = navController,
                 messagesViewModel = messagesViewModel
             )
         }
@@ -105,6 +111,6 @@ fun MessagesWidget(messagesViewModel: MessagesViewModel = viewModel()) {
 @Composable
 fun DefaultPreview() {
     WizardOfOzTheme {
-        MessagesWidget()
+        MessagesWidget(navController = rememberNavController())
     }
 }

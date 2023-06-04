@@ -29,7 +29,6 @@ class SignInOTPViewModel(
                 )
             }
         }
-
     }
 
     private val phoneNumber: String = checkNotNull(savedStateHandle["phoneNumber"])

@@ -8,8 +8,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.stockinos.mobile.wizardofoz.MessagesWidget
 import com.stockinos.mobile.wizardofoz.WoZApplication
 import com.stockinos.mobile.wizardofoz.ui.home.HomeScreen
+import com.stockinos.mobile.wizardofoz.ui.messages.MessagesScreen
+import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModel
 import com.stockinos.mobile.wizardofoz.ui.signin.SignInScreen
 import com.stockinos.mobile.wizardofoz.ui.signin.SignInViewModel
 import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPScreen
@@ -39,6 +42,12 @@ fun Navigation(navController: NavHostController) {
         }
         composable(route = Routes.Home.route) {
             HomeScreen(navController = navController)
+        }
+        composable(route = Routes.Messages.route) {
+            MessagesScreen(
+                navController = navController,
+                messagesViewModel = viewModel(factory = MessagesViewModel.Factory)
+            )
         }
     }
 }
