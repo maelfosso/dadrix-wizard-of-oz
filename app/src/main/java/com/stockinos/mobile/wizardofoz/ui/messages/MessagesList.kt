@@ -14,6 +14,7 @@ import com.stockinos.mobile.wizardofoz.ui.MessageItem
 @Composable
 fun MessagesList(
     messagesLiveData: LiveData<List<MessagesByUser>>,
+    onMessageItemClicked: (user: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val messages by messagesLiveData.observeAsState(initial = emptyList())
@@ -26,7 +27,7 @@ fun MessagesList(
             items = messages,
             key = { message -> message.user },
         ) { message ->
-            MessageItem(message = message)
+            MessageItem(message = message, onClick = { onMessageItemClicked(it) })
         }
     }
 }

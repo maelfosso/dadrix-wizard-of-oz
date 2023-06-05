@@ -31,8 +31,9 @@ import com.stockinos.mobile.wizardofoz.ui.messages.MessagesByUser
 
 @Composable
 fun MessageItem(
-    message: MessagesByUser, // WhatsappMessage,
-    modifier: Modifier = Modifier
+    message: MessagesByUser,
+    modifier: Modifier = Modifier,
+    onClick: (user: String) -> Unit
 ) {
     val TAG: String = "MessageItem"
     val context = LocalContext.current
@@ -56,7 +57,8 @@ fun MessageItem(
                 onClick = {
                     Toast.makeText(context,"OnClick",Toast.LENGTH_LONG).show()
                     Log.v(TAG,"OnClick ");
-                    context.startActivity(conversationActivityIntent)
+                    // context.startActivity(conversationActivityIntent)
+                    onClick(message.user)
                 }
             )
     ) {
@@ -187,6 +189,7 @@ fun whatsappMessageText() = """
 @Composable
 fun DefaultPreview() {
     MessageItem(
-        messageByUser
+        messageByUser,
+        onClick = {}
     )
 }

@@ -42,12 +42,12 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        (application as WoZApplication).connectSocket()
+        // (application as WoZApplication).connectSocket()
     }
 
     override fun onDestroy() {
-        val app = this.application as WoZApplication
-        app.disconnectSocket()
+        // val app = this.application as WoZApplication
+        // app.disconnectSocket()
         super.onDestroy()
     }
 }

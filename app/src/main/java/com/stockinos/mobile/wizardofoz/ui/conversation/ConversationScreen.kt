@@ -46,8 +46,8 @@ import java.util.*
 @Composable
 fun ConversationScreen(
     conversationViewModel: ConversationViewModel,
-    navigationToProfile: (String) -> Unit = {},
     modifier: Modifier = Modifier,
+    navigationToProfile: (String) -> Unit = {},
     onNavIconPressed: () -> Unit = {}
 ) {
     var scrollState = rememberLazyListState()

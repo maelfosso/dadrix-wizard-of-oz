@@ -5,5 +5,5 @@ sealed class Routes(val route: String) {
     object SignInOTP: Routes("signin/otp")
     object Home: Routes("home")
     object Messages: Routes("messages")
-    object Conversation: Routes("conversation/{user}")
+    object Conversation: Routes("conversations/{phoneNumber}")
 }

@@ -4,7 +4,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 object Constants {
-    const val BASE_URL = "http://192.168.8.102:8000"
+    private const val BASE_URL = "http://192.168.8.100"
+    const val API_URL = "$BASE_URL:8000"
+    const val SOCKET_IO_URL = "$BASE_URL:4000"
 }
 
 object Style {

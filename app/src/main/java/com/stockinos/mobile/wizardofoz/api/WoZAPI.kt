@@ -17,7 +17,7 @@ interface WoZAPI {
         fun getInstance(): WoZAPI {
             if (woZAPI == null) {
                 woZAPI = Retrofit.Builder()
-                    .baseUrl(Constants.BASE_URL)
+                    .baseUrl(Constants.API_URL)
                     .addConverterFactory(MoshiConverterFactory.create())
                     .build()
                     .create(WoZAPI::class.java)

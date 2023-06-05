@@ -11,10 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.stockinos.mobile.wizardofoz.WoZApplication
-import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationScreen
-import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationViewModel
-import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationViewModelFactory
 import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
 
 class ConversationActivity : ComponentActivity() {
@@ -25,13 +21,13 @@ class ConversationActivity : ComponentActivity() {
         val currentIntent = this.intent
         val currentUser = currentIntent.getStringExtra("CUSTOMER")
 
-        val conversationViewModel: ConversationViewModel by viewModels {
-            ConversationViewModelFactory(
-                (application as WoZApplication).whatsappMessageDao,
-                (application as WoZApplication).mSocket,
-                currentUser!!
-            )
-        }
+        // val conversationViewModel: ConversationViewModel by viewModels {
+        //     ConversationViewModelFactory(
+        //         (application as WoZApplication).whatsappMessageDao,
+        //         (application as WoZApplication).mSocket,
+        //         currentUser!!
+        //     )
+        // }
 
         setContent {
             WizardOfOzTheme {
@@ -40,9 +36,9 @@ class ConversationActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ConversationScreen(
-                        conversationViewModel = conversationViewModel
-                    )
+                    // ConversationScreen(
+                    //     conversationViewModel = conversationViewModel
+                    // )
                 }
             }
         }

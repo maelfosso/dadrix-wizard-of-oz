@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class MessagesViewModel(
-    private val repository: WhatsappMessageDao
+    private val whatsappMessageDao: WhatsappMessageDao
 ): ViewModel() {
     companion object {
         private val TAG = SignInOTPViewModel::class.java.name
@@ -21,13 +21,17 @@ class MessagesViewModel(
                 val savedStateHandle = createSavedStateHandle()
                 // val myRepository = (this[APPLICATION_KEY] as MyApplication).myRepository
                 MessagesViewModel(
-                    repository = WoZApplication.getAppInstance().whatsappMessageDao
+                    whatsappMessageDao = WoZApplication.getAppInstance().whatsappMessageDao
                 )
             }
         }
     }
 
-    val allMessages: LiveData<List<WhatsappMessage>> = repository.allWhatsappMessages
+    init {
+        WoZApplication.getAppInstance().connectSocket()
+    }
+
+    val allMessages: LiveData<List<WhatsappMessage>> = whatsappMessageDao.allWhatsappMessages
         .asLiveData()
 
     val allMessagesByUser: LiveData<List<MessagesByUser>> = allMessages.map { it ->
@@ -43,16 +47,16 @@ class MessagesViewModel(
     }
 
     fun insert(message: WhatsappMessage) = viewModelScope.launch {
-        repository.insert(message)
+        whatsappMessageDao.insert(message)
     }
 
 }
 
-class MessagesViewModelFactory(private val repository: WhatsappMessageDao): ViewModelProvider.Factory {
+class MessagesViewModelFactory(private val whatsappMessageDao: WhatsappMessageDao): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MessagesViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return MessagesViewModel(repository) as T
+            return MessagesViewModel(whatsappMessageDao) as T
         }
 
         throw IllegalArgumentException("Unknown ViewModel Class")

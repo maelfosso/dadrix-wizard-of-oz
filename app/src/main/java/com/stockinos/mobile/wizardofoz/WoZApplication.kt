@@ -7,6 +7,7 @@ import com.stockinos.mobile.wizardofoz.api.WoZAPI
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
 import com.stockinos.mobile.wizardofoz.dao.WhatsappMessageDao
 import com.stockinos.mobile.wizardofoz.repositories.AuthRepository
+import com.stockinos.mobile.wizardofoz.utils.Constants
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
@@ -42,7 +43,7 @@ class WoZApplication: Application() {
             if (field == null) {
                 try {
                     val opts = IO.Options()
-                    field = IO.socket("http://10.0.2.2:4000", opts)
+                    field = IO.socket(Constants.SOCKET_IO_URL, opts)
                     setupSocket()
                 } catch (e: URISyntaxException) {
                     Log.d(TAG, "Error connecting socking : ${e.message}")

@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.stockinos.mobile.wizardofoz.MessagesWidget
 import com.stockinos.mobile.wizardofoz.WoZApplication
+import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationScreen
+import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationViewModel
 import com.stockinos.mobile.wizardofoz.ui.home.HomeScreen
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesScreen
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModel
@@ -47,6 +49,19 @@ fun Navigation(navController: NavHostController) {
             MessagesScreen(
                 navController = navController,
                 messagesViewModel = viewModel(factory = MessagesViewModel.Factory)
+            )
+        }
+        composable(
+            route = Routes.Conversation.route,
+            arguments = listOf(
+                navArgument("phoneNumber") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) { navBackStackEntry ->
+            ConversationScreen(
+                conversationViewModel = viewModel(factory = ConversationViewModel.Factory)
             )
         }
     }
