@@ -81,9 +81,10 @@ class SignInOTPViewModel(
                     }
                 }
                 .collect { response ->
-                    Log.d(TAG, "checking successful: $response")
-
                     if (response.isSuccessful) {
+                        Log.d(TAG, "checking successful: ${response.body()}")
+
+
                         onSuccess()
                         _uiState.update {
                             it.copy(
