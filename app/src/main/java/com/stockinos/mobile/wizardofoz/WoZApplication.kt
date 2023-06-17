@@ -1,7 +1,11 @@
 package com.stockinos.mobile.wizardofoz
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
 import com.stockinos.mobile.wizardofoz.api.WoZAPI
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
@@ -14,6 +18,8 @@ import io.socket.emitter.Emitter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import java.net.URISyntaxException
+
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "data_store")
 
 class WoZApplication: Application() {
     companion object {

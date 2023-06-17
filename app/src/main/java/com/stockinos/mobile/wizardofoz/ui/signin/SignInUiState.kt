@@ -1,9 +1,9 @@
 package com.stockinos.mobile.wizardofoz.ui.signin
 
+import com.stockinos.mobile.wizardofoz.BaseUiState
+
 data class SignInUiState(
+    override val error: String = "",
     val phoneNumber: String = "",
     val isSignIn: Boolean = false,
-    val error: String = ""
-) {
-    fun isError() = error.isNotBlank() || error.isNotEmpty()
-}
+) : BaseUiState(error)

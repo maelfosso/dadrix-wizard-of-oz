@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.stockinos.mobile.wizardofoz.CoroutinesHandler
 import com.stockinos.mobile.wizardofoz.models.GetError
 import com.stockinos.mobile.wizardofoz.navigation.Routes
 import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
@@ -32,6 +33,7 @@ fun SignInScreen(
     navController: NavController,
     signInViewModel: SignInViewModel
 ) {
+    val TAG: String = "SignInScreen"
     val signInUiState by signInViewModel.uiState.collectAsState()
 
     Scaffold(

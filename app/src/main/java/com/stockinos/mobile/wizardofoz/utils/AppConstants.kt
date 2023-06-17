@@ -2,11 +2,12 @@ package com.stockinos.mobile.wizardofoz.utils
 
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.stockinos.mobile.wizardofoz.BuildConfig
 
 object Constants {
-    private const val BASE_URL = "http://192.168.8.104"
-    const val API_URL = "$BASE_URL:8000"
-    const val SOCKET_IO_URL = "$BASE_URL:4000"
+    private var BASE_URL = "http://${BuildConfig.BASE_URL}"
+    var API_URL = "$BASE_URL:8000"
+    var SOCKET_IO_URL = "$BASE_URL:4000"
 }
 
 object Style {

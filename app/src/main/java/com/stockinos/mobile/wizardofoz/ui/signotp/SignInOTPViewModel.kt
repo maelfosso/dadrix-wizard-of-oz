@@ -9,12 +9,14 @@ import androidx.savedstate.SavedStateRegistryOwner
 import com.stockinos.mobile.wizardofoz.WoZApplication
 import com.stockinos.mobile.wizardofoz.api.models.requests.CheckOTPRequest
 import com.stockinos.mobile.wizardofoz.repositories.AuthRepository
+import com.stockinos.mobile.wizardofoz.services.TokenManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SignInOTPViewModel(
     savedStateHandle: SavedStateHandle,
+    val tokenManager: TokenManager,
     val authRepository: AuthRepository
 ): ViewModel() {
     companion object {
@@ -24,8 +26,9 @@ class SignInOTPViewModel(
                 val savedStateHandle = createSavedStateHandle()
                 // val myRepository = (this[APPLICATION_KEY] as MyApplication).myRepository
                 SignInOTPViewModel(
+                    savedStateHandle = savedStateHandle,
+                    tokenManager = TokenManager(WoZApplication.getAppInstance().applicationContext),
                     authRepository = WoZApplication.getAppInstance().authRepository,
-                    savedStateHandle = savedStateHandle
                 )
             }
         }
@@ -83,7 +86,9 @@ class SignInOTPViewModel(
                 .collect { response ->
                     if (response.isSuccessful) {
                         Log.d(TAG, "checking successful: ${response.body()}")
+                        val checkOTPResponse = response.body()!!
 
+                        tokenManager.saveToken(checkOTPResponse.token)
 
                         onSuccess()
                         _uiState.update {
