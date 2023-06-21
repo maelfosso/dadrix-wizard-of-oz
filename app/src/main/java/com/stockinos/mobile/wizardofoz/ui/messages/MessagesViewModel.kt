@@ -1,15 +1,15 @@
 package com.stockinos.mobile.wizardofoz.ui.messages
 
+import android.util.Log
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.navigation.NavController
 import com.stockinos.mobile.wizardofoz.WoZApplication
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
 import com.stockinos.mobile.wizardofoz.dao.WhatsappMessageDao
 import com.stockinos.mobile.wizardofoz.services.AuthManager
 import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -38,19 +38,22 @@ class MessagesViewModel(
     val allMessages: LiveData<List<WhatsappMessage>> = whatsappMessageDao.allWhatsappMessages
         .asLiveData()
 
-    val allMessagesByUser: LiveData<List<MessagesByUser>> = allMessages.map { it ->
+    val allMessagesAboutUser: LiveData<List<MessagesByUser>> = allMessages.map { it ->
         val authUser =  runBlocking {
             authManager.getUser().first()
         }
 
-        it.groupBy { it.from }
-            .filter { (from, messages) -> from != authUser.phoneNumber }
-            .mapValues { (from, messages) ->
-                MessagesByUser(
-                    authUser.phoneNumber,
-                    messages,
-                    messages.count { it.state == "unread" })
-            }
+        val userFrom = it.groupBy { it.from }
+        val userTo = it.groupBy { it.to }
+        (userFrom.asSequence() + userTo.asSequence())
+            .groupBy({ it.key }, { it.value })
+            .mapValues { (key, values) -> values.flatten() }
+            .filterKeys { user -> !(user.isNullOrEmpty() || user.isNullOrBlank()) && user != authUser.phoneNumber }
+            .mapValues { (user, messages) -> MessagesByUser(
+                user!!,
+                messages,
+                messages.count { it.state == "unread" }
+            )}
             .values.map { it }
     }
 

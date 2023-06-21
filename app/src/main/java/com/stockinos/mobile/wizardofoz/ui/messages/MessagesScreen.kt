@@ -11,8 +11,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.stockinos.mobile.wizardofoz.navigation.Routes
-import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +67,7 @@ fun MessagesScreenContent(
             verticalArrangement = Arrangement.Top
         ) {
             MessagesList(
-                messagesLiveData = messagesViewModel.allMessagesByUser,
+                messagesLiveData = messagesViewModel.allMessagesAboutUser,
                 onMessageItemClicked = { user ->
                     navController.navigate("conversations/$user")
                 }

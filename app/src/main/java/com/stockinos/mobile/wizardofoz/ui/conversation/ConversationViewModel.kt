@@ -61,8 +61,6 @@ class ConversationViewModel(
             "message" to text
         )
 
-        // fetchJob?.cancel()
-        // fetchJob =
         viewModelScope.launch(Dispatchers.IO + NonCancellable) {
             socket.emit(
                 "whatsapp:message:woz:sent",

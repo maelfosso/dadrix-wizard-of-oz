@@ -3,7 +3,6 @@ package com.stockinos.mobile.wizardofoz.ui
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,16 +16,12 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.gson.Gson
 import com.stockinos.mobile.wizardofoz.messageByUser
-import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesByUser
 
 @Composable
@@ -37,8 +32,6 @@ fun MessageItem(
 ) {
     val TAG: String = "MessageItem"
     val context = LocalContext.current
-    val conversationActivityIntent = Intent(context, ConversationActivity::class.java)
-    conversationActivityIntent.putExtra("CUSTOMER", message.user)
 
     Log.d(TAG, "Message: $message")
     Box(
@@ -56,9 +49,8 @@ fun MessageItem(
                 )
             }.clickable (
                 onClick = {
-                    Toast.makeText(context,"OnClick",Toast.LENGTH_LONG).show()
-                    Log.v(TAG,"OnClick ");
-                    // context.startActivity(conversationActivityIntent)
+                    Toast.makeText(context,"Opening messages from ${message.user}",Toast.LENGTH_LONG).show()
+                    Log.v(TAG,"Opening messages from ${message.user}")
                     onClick(message.user)
                 }
             )
@@ -120,24 +112,26 @@ fun MessageItem(
                         )
                     )
 
-                    Box(
-                        modifier = Modifier
-                            .width(34.dp)
-                            .height(20.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFFB3261E)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = message.nbUnreadMessaes.toString(), // message.from.uppercase()[0].toString(),
-                            style = TextStyle(
-                                fontWeight = FontWeight.W400,
-                                fontSize = 14.sp,
-                                lineHeight = 20.sp,
-                                letterSpacing = 0.25.sp,
-                                color = Color.White
+                    if (message.nbUnreadMessages > 0) {
+                        Box(
+                            modifier = Modifier
+                                .width(34.dp)
+                                .height(20.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFB3261E)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = message.nbUnreadMessages.toString(), // message.from.uppercase()[0].toString(),
+                                style = TextStyle(
+                                    fontWeight = FontWeight.W400,
+                                    fontSize = 14.sp,
+                                    lineHeight = 20.sp,
+                                    letterSpacing = 0.25.sp,
+                                    color = Color.White
+                                )
                             )
-                        )
+                        }
                     }
                 }
 
