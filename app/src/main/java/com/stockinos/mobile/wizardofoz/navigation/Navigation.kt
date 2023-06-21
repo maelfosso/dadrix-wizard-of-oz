@@ -60,7 +60,7 @@ fun Navigation(navController: NavHostController) {
             )
         }
         composable(
-            route = Routes.Conversation.route,
+            route = Routes.Conversation.route + "/{phoneNumber}",
             arguments = listOf(
                 navArgument("phoneNumber") {
                     type = NavType.StringType
@@ -69,6 +69,7 @@ fun Navigation(navController: NavHostController) {
             )
         ) { navBackStackEntry ->
             ConversationScreen(
+                navController,
                 conversationViewModel = viewModel(factory = ConversationViewModel.Factory)
             )
         }

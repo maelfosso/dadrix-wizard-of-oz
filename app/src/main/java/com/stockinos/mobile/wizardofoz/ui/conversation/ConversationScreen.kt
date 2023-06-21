@@ -14,6 +14,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,6 +34,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.stockinos.mobile.wizardofoz.R
 import com.stockinos.mobile.wizardofoz.exampleConversationUiState
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
@@ -45,47 +49,86 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConversationScreen(
+    navController: NavController,
     conversationViewModel: ConversationViewModel,
     modifier: Modifier = Modifier,
     navigationToProfile: (String) -> Unit = {},
     onNavIconPressed: () -> Unit = {}
+) {
+    val conversationUiState by conversationViewModel.uiState.collectAsState()
+    val phoneNumber = conversationUiState.user
+
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            CenterAlignedTopAppBar(
+                modifier = Modifier,
+                title = {
+                    Text(
+                        text = phoneNumber,
+                        color = Color.Black
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Filled.ArrowBack, "ContentDescription")
+                    }
+                },
+            )
+        },
+
+        content = { innerPadding ->
+            ConversationScreenContent(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .wrapContentSize(),
+                conversationUiState,
+                sendMessage = { message -> conversationViewModel.sendMessage(message) }
+            )
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ConversationScreenContent(
+    modifier: Modifier = Modifier,
+    conversationUiState: ConversationUiState,
+    sendMessage: (String) -> Unit = {}
 ) {
     var scrollState = rememberLazyListState()
     var topBarState = rememberTopAppBarState()
     var scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
     val scope = rememberCoroutineScope()
 
-    val conversationUiState by conversationViewModel.uiState.collectAsState()
-
-    Surface(modifier = modifier) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
+    Box(modifier = modifier) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+        ) {
+            Messages(
+                modifier = Modifier.weight(1f),
+                author = conversationUiState.user,
+                messages = conversationUiState.messagesItems,
+                scrollState = scrollState
+            )
+            ResponseInput(
+                onMessageSent = {
+                    sendMessage(it)
+                },
+                resetScroll = {
+                    scope.launch {
+                        scrollState.scrollToItem(0)
+                    }
+                },
+                // Use navigationBarsPadding() imePadding() and , to move the input panel above both the
+                // navigation bar, and on-screen keyboard (IME)
                 modifier = Modifier
-                    .fillMaxSize()
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-            ) {
-                Messages(
-                    modifier = Modifier.weight(1f),
-                    author = conversationUiState.user,
-                    messages = conversationUiState.messagesItems,
-                    scrollState = scrollState
-                )
-                ResponseInput(
-                    onMessageSent = {
-                        conversationViewModel.sendMessage(it)
-                    },
-                    resetScroll = {
-                        scope.launch {
-                            scrollState.scrollToItem(0)
-                        }
-                    },
-                    // Use navigationBarsPadding() imePadding() and , to move the input panel above both the
-                    // navigation bar, and on-screen keyboard (IME)
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .imePadding()
-                )
-            }
+                    .navigationBarsPadding()
+                    .imePadding()
+            )
         }
     }
 }

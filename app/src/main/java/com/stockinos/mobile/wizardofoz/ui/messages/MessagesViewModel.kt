@@ -7,12 +7,15 @@ import androidx.navigation.NavController
 import com.stockinos.mobile.wizardofoz.WoZApplication
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
 import com.stockinos.mobile.wizardofoz.dao.WhatsappMessageDao
+import com.stockinos.mobile.wizardofoz.services.AuthManager
 import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class MessagesViewModel(
-    private val whatsappMessageDao: WhatsappMessageDao
+    private val whatsappMessageDao: WhatsappMessageDao,
+    private val authManager: AuthManager,
 ): ViewModel() {
     companion object {
         private val TAG = SignInOTPViewModel::class.java.name
@@ -21,7 +24,8 @@ class MessagesViewModel(
                 val savedStateHandle = createSavedStateHandle()
                 // val myRepository = (this[APPLICATION_KEY] as MyApplication).myRepository
                 MessagesViewModel(
-                    whatsappMessageDao = WoZApplication.getAppInstance().whatsappMessageDao
+                    whatsappMessageDao = WoZApplication.getAppInstance().whatsappMessageDao,
+                    authManager = AuthManager(WoZApplication.getAppInstance().applicationContext),
                 )
             }
         }
@@ -35,11 +39,15 @@ class MessagesViewModel(
         .asLiveData()
 
     val allMessagesByUser: LiveData<List<MessagesByUser>> = allMessages.map { it ->
+        val authUser =  runBlocking {
+            authManager.getUser().first()
+        }
+
         it.groupBy { it.from }
-            .filter { (from, messages) -> from != "inner" }
+            .filter { (from, messages) -> from != authUser.phoneNumber }
             .mapValues { (from, messages) ->
                 MessagesByUser(
-                    from,
+                    authUser.phoneNumber,
                     messages,
                     messages.count { it.state == "unread" })
             }
@@ -52,13 +60,3 @@ class MessagesViewModel(
 
 }
 
-class MessagesViewModelFactory(private val whatsappMessageDao: WhatsappMessageDao): ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(MessagesViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return MessagesViewModel(whatsappMessageDao) as T
-        }
-
-        throw IllegalArgumentException("Unknown ViewModel Class")
-    }
-}

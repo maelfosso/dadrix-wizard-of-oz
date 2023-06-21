@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
         WhatsappMessageImage::class,
         WhatsappMessageAudio::class
     ),
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 public abstract class WoZRoomDatabase: RoomDatabase() {
@@ -47,7 +47,7 @@ public abstract class WoZRoomDatabase: RoomDatabase() {
 
         fun populateDatabase(whatsappMessageDao: IWhatsappMessageDao) {
             // Delete all content here
-            // whatsappMessageDao.deleteAll()
+            // whatsappMessageDao.getWhatsappMessagesAboutUser()
 
             // Add some sample message
             // var msg = WhatsappMessage()

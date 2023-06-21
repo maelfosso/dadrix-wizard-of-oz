@@ -30,7 +30,7 @@ android {
 
         debug {
             minifyEnabled false
-            buildConfigField "String", "BASE_URL", "\"192.168.8.101\""
+            buildConfigField "String", "BASE_URL", "\"10.0.2.2\""
         }
     }
     compileOptions {

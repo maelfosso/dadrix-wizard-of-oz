@@ -4,14 +4,13 @@ import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.stockinos.mobile.wizardofoz.WoZApplication
-import com.stockinos.mobile.wizardofoz.services.TokenManager
-import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPViewModel
+import com.stockinos.mobile.wizardofoz.services.AuthManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class TokenViewModel(
-    private val tokenManager: TokenManager,
+    private val authManager: AuthManager,
 ): ViewModel() {
 
     companion object {
@@ -20,7 +19,7 @@ class TokenViewModel(
             initializer {
                 val savedStateHandle = createSavedStateHandle()
                 TokenViewModel(
-                    tokenManager = TokenManager(WoZApplication.getAppInstance().applicationContext),
+                    authManager = AuthManager(WoZApplication.getAppInstance().applicationContext),
                 )
             }
         }
@@ -29,7 +28,7 @@ class TokenViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            tokenManager.getToken().collect {
+            authManager.getToken().collect {
                 withContext(Dispatchers.Main) {
                     token.value = it
                 }
@@ -39,13 +38,13 @@ class TokenViewModel(
 
     fun saveToken(token: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            tokenManager.saveToken(token)
+            authManager.saveToken(token)
         }
     }
 
     fun deleteToken() {
         viewModelScope.launch(Dispatchers.IO) {
-            tokenManager.deleteToken()
+            authManager.deleteToken()
         }
     }
 }

@@ -8,18 +8,17 @@ import com.google.gson.Gson
 import com.stockinos.mobile.wizardofoz.WoZApplication
 import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
 import com.stockinos.mobile.wizardofoz.dao.WhatsappMessageDao
+import com.stockinos.mobile.wizardofoz.services.AuthManager
 import io.socket.client.Ack
 import io.socket.client.Socket
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 class ConversationViewModel(
     savedStateHandle: SavedStateHandle,
     val whatsappMessageDao: WhatsappMessageDao,
     val socket: Socket,
+    val authManager: AuthManager,
 ): ViewModel() {
     companion object {
         private val TAG = ConversationViewModel::class.java.name
@@ -33,6 +32,7 @@ class ConversationViewModel(
                     savedStateHandle,
                     whatsappMessageDao = whatsappMessageDao,
                     socket = mSocket,
+                    authManager = AuthManager(WoZApplication.getAppInstance().applicationContext),
                 )
             }
         }
@@ -52,8 +52,11 @@ class ConversationViewModel(
 
     fun sendMessage(text: String) {
         Log.d(TAG, "sendMessage : $text")
+        val authUser = runBlocking {
+            authManager.getUser().first()
+        }
         val message = mapOf<String, String>(
-            "from" to "inner",
+            "from" to authUser.phoneNumber,
             "to" to user,
             "message" to text
         )

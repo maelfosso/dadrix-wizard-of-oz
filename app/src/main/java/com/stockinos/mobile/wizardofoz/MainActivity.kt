@@ -21,16 +21,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.stockinos.mobile.wizardofoz.navigation.Navigation
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModel
-import com.stockinos.mobile.wizardofoz.ui.messages.MessagesViewModelFactory
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesScreen
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesScreenContent
 import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
 
 class MainActivity : ComponentActivity() {
 
-    private val messagesViewModel: MessagesViewModel by viewModels {
-        MessagesViewModelFactory((application as WoZApplication).whatsappMessageDao)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

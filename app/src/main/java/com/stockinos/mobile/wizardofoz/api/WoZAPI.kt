@@ -5,7 +5,7 @@ import com.stockinos.mobile.wizardofoz.api.models.requests.CheckOTPRequest
 import com.stockinos.mobile.wizardofoz.api.models.requests.GetOTPRequest
 import com.stockinos.mobile.wizardofoz.api.models.responses.CheckOTPResponse
 import com.stockinos.mobile.wizardofoz.api.models.responses.RefreshTokenResponse
-import com.stockinos.mobile.wizardofoz.services.TokenManager
+import com.stockinos.mobile.wizardofoz.services.AuthManager
 import com.stockinos.mobile.wizardofoz.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -22,9 +22,9 @@ interface WoZAPI {
         var woZAPI: WoZAPI? = null
 
         fun getInstance(): WoZAPI {
-            val tokenManager = TokenManager(WoZApplication.getAppInstance().applicationContext)
+            val authManager = AuthManager(WoZApplication.getAppInstance().applicationContext)
             val loggingInterceptor = HttpLoggingInterceptor()
-            val authInterceptor  = AuthInterceptor(tokenManager = tokenManager)
+            val authInterceptor  = AuthInterceptor(authManager = authManager)
             // val authAuthenticator = AuthAuthenticator(
             //     refreshToken = woZAPI.refreshToken,
             //     tokenManager = tokenManager

@@ -1,7 +1,6 @@
 package com.stockinos.mobile.wizardofoz.api
 
-import com.stockinos.mobile.wizardofoz.api.models.responses.RefreshTokenResponse
-import com.stockinos.mobile.wizardofoz.services.TokenManager
+import com.stockinos.mobile.wizardofoz.services.AuthManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.*
@@ -9,11 +8,11 @@ import okhttp3.*
 class AuthAuthenticator(
     // private val refreshToken: () retrofit2.Response<RefreshTokenResponse>,
     private val woZAPI: WoZAPI,
-    private val tokenManager: TokenManager
+    private val authManager: AuthManager
 ): Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
         val token = runBlocking {
-            tokenManager.getToken().first()
+            authManager.getToken().first()
         }
 
         return runBlocking {
@@ -22,11 +21,11 @@ class AuthAuthenticator(
 
             // Couldn't refresh the token, so restart the login process
             if (!newToken.isSuccessful || newToken.body() == null) {
-                tokenManager.deleteToken()
+                authManager.deleteToken()
             }
 
             newToken.body()?.let {
-                tokenManager.saveToken(it.token)
+                authManager.saveToken(it.token)
                 response.request.newBuilder()
                     .header("Authorization", "Bearer ${it.token}")
                     .build()

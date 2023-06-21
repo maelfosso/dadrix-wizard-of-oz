@@ -1,22 +1,21 @@
 package com.stockinos.mobile.wizardofoz.ui.signotp
 
-import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.savedstate.SavedStateRegistryOwner
 import com.stockinos.mobile.wizardofoz.WoZApplication
 import com.stockinos.mobile.wizardofoz.api.models.requests.CheckOTPRequest
+import com.stockinos.mobile.wizardofoz.models.User
 import com.stockinos.mobile.wizardofoz.repositories.AuthRepository
-import com.stockinos.mobile.wizardofoz.services.TokenManager
+import com.stockinos.mobile.wizardofoz.services.AuthManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SignInOTPViewModel(
     savedStateHandle: SavedStateHandle,
-    val tokenManager: TokenManager,
+    val authManager: AuthManager,
     val authRepository: AuthRepository
 ): ViewModel() {
     companion object {
@@ -27,7 +26,7 @@ class SignInOTPViewModel(
                 // val myRepository = (this[APPLICATION_KEY] as MyApplication).myRepository
                 SignInOTPViewModel(
                     savedStateHandle = savedStateHandle,
-                    tokenManager = TokenManager(WoZApplication.getAppInstance().applicationContext),
+                    authManager = AuthManager(WoZApplication.getAppInstance().applicationContext),
                     authRepository = WoZApplication.getAppInstance().authRepository,
                 )
             }
@@ -88,7 +87,14 @@ class SignInOTPViewModel(
                         Log.d(TAG, "checking successful: ${response.body()}")
                         val checkOTPResponse = response.body()!!
 
-                        tokenManager.saveToken(checkOTPResponse.token)
+
+                        val user = User(
+                            name = checkOTPResponse.name,
+                            phoneNumber = checkOTPResponse.phoneNumber
+                        )
+                        val token = checkOTPResponse.token
+                        authManager.saveUser(user)
+                        authManager.saveToken(token)
 
                         onSuccess()
                         _uiState.update {

@@ -1,6 +1,7 @@
 package com.stockinos.mobile.wizardofoz.ui.signotp
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
@@ -219,6 +220,7 @@ val getErrors: Map<String, GetError> = mapOf(
 
 @Composable
 fun Error(error: String) {
+    Log.d("SOTP Error: ", "Error: ${error}")
     if (error.isNotBlank() || error.isNotEmpty()) {
         Column(
             modifier = Modifier.fillMaxWidth(),

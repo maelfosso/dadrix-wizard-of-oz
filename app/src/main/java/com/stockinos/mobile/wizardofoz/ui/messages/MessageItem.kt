@@ -40,6 +40,7 @@ fun MessageItem(
     val conversationActivityIntent = Intent(context, ConversationActivity::class.java)
     conversationActivityIntent.putExtra("CUSTOMER", message.user)
 
+    Log.d(TAG, "Message: $message")
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -63,7 +64,6 @@ fun MessageItem(
             )
     ) {
         Row(
-
             modifier = Modifier
                 .padding(
                     top = 12.dp,
@@ -83,7 +83,7 @@ fun MessageItem(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = message.user.uppercase()[0].toString(), // message.from.uppercase()[0].toString(),
+                    text = message.user.uppercase()[0].toString(),
                     style = TextStyle(
                         fontWeight = FontWeight.W500,
                         fontSize = 16.sp,
