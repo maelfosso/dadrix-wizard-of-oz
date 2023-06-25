@@ -1,6 +1,8 @@
 package com.tschwaa.mobile
 
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -14,26 +16,39 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.stockinos.mobile.wizardofoz.HomeActivity
 import com.stockinos.mobile.wizardofoz.navigation.Routes
-import com.stockinos.mobile.wizardofoz.ui.viewmodels.TokenViewModel
+import com.stockinos.mobile.wizardofoz.viewmodels.TokenViewModel
 import com.stockinos.mobile.wizardofoz.utils.assetsToBitmap
 import com.stockinos.mobile.wizardofoz.utils.splash_ic_main_image
 import kotlinx.coroutines.delay
+
+fun afterSplashScreen(
+    context: Context,
+    navController: NavController,
+    token: String?
+) {
+    Log.d("afterSplashScreen", "Token: $token - ${token.isNullOrEmpty()} - ${token.isNullOrBlank()}")
+    if (token.isNullOrEmpty()) {
+        navController.navigate(Routes.SignIn.route)
+    } else {
+        HomeActivity.startActivity(context)
+    }
+}
 
 @Composable
 fun SplashScreen(
     navController: NavController,
     tokenViewModel: TokenViewModel
 ) {
-    Log.d("SplashScreen", "TOken: ${tokenViewModel.token.value}")
+    Log.d("SplashScreen", "Token: ${tokenViewModel.token.value}")
+
+    val context = LocalContext.current
+
     SplashScreenContent()
     LaunchedEffect(Unit) {
         delay(100)
-        if (tokenViewModel.token.value != null) {
-            navController.navigate(Routes.Messages.route)
-        } else {
-            navController.navigate(Routes.SignIn.route)
-        }
+        afterSplashScreen(context, navController, tokenViewModel.token.value)
     }
 }
 

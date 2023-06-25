@@ -36,7 +36,7 @@ fun WizardOfOzTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compos
     }
 
     MaterialTheme(
-         colorScheme = colors,
+        colorScheme = colors,
         typography = Typography,
         shapes = Shapes,
         content = content

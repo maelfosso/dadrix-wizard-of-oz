@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.stockinos.mobile.wizardofoz.HomeActivity
 import com.stockinos.mobile.wizardofoz.models.GetError
 import com.stockinos.mobile.wizardofoz.navigation.Routes
 import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
@@ -36,6 +38,7 @@ fun SignInOTPScreen(
     signInOTPViewModel: SignInOTPViewModel
 ) {
     val signInOTPUiState by signInOTPViewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -67,7 +70,8 @@ fun SignInOTPScreen(
                     },
                     onCheckOTP = {
                         signInOTPViewModel.checkOTP {
-                            navController.navigate(Routes.Messages.route)
+                            // navController.navigate(Routes.Messages.route)
+                            HomeActivity.startActivity(context)
                         }
                     }
                 )

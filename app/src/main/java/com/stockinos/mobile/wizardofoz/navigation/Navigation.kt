@@ -1,6 +1,5 @@
 package com.stockinos.mobile.wizardofoz.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -8,8 +7,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.stockinos.mobile.wizardofoz.MessagesWidget
-import com.stockinos.mobile.wizardofoz.WoZApplication
 import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationScreen
 import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationViewModel
 import com.stockinos.mobile.wizardofoz.ui.home.HomeScreen
@@ -19,11 +16,11 @@ import com.stockinos.mobile.wizardofoz.ui.signin.SignInScreen
 import com.stockinos.mobile.wizardofoz.ui.signin.SignInViewModel
 import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPScreen
 import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPViewModel
-import com.stockinos.mobile.wizardofoz.ui.viewmodels.TokenViewModel
+import com.stockinos.mobile.wizardofoz.viewmodels.TokenViewModel
 import com.tschwaa.mobile.SplashScreen
 
 @Composable
-fun Navigation(navController: NavHostController) {
+fun NavigationGuest(navController: NavHostController) {
     val TAG = "Navigation"
 
     NavHost(navController = navController, startDestination = Routes.Splash.route) {
@@ -50,6 +47,35 @@ fun Navigation(navController: NavHostController) {
                 signInOTPViewModel = viewModel(factory = SignInOTPViewModel.Factory)
             )
         }
+        // composable(route = Routes.Home.route) {
+        //     HomeScreen(navController = navController)
+        // }
+        // composable(route = Routes.Messages.route) {
+        //     MessagesScreen(
+        //         navController = navController,
+        //         messagesViewModel = viewModel(factory = MessagesViewModel.Factory)
+        //     )
+        // }
+        // composable(
+        //     route = Routes.Conversation.route + "/{phoneNumber}",
+        //     arguments = listOf(
+        //         navArgument("phoneNumber") {
+        //             type = NavType.StringType
+        //             defaultValue = ""
+        //         }
+        //     )
+        // ) { navBackStackEntry ->
+        //     ConversationScreen(
+        //         navController,
+        //         conversationViewModel = viewModel(factory = ConversationViewModel.Factory)
+        //     )
+        // }
+    }
+}
+
+@Composable
+fun NavigationAuthenticated(navController: NavHostController) {
+    NavHost(navController = navController, startDestination = Routes.Messages.route) {
         composable(route = Routes.Home.route) {
             HomeScreen(navController = navController)
         }

@@ -1,4 +1,4 @@
-package com.stockinos.mobile.wizardofoz.ui.viewmodels
+package com.stockinos.mobile.wizardofoz.viewmodels
 
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.initializer
