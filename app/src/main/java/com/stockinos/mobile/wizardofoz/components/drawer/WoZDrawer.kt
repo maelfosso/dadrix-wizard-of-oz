@@ -1,5 +1,6 @@
 package com.stockinos.mobile.wizardofoz.components.drawer
 
+import android.widget.ImageView
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue.Closed
 import androidx.compose.material3.DrawerValue.Open
@@ -8,25 +9,30 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
 import com.stockinos.mobile.wizardofoz.models.User
 import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WoZDrawer(
-    drawerState: DrawerState = rememberDrawerState(initialValue = Open),
+    drawerState: DrawerState = rememberDrawerState(initialValue = Closed),
     user: User,
+    onNavigationItemClick: (item: ImageVector) -> Unit,
     content: @Composable () -> Unit
 ) {
-    WizardOfOzTheme() {
+    WizardOfOzTheme {
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
-                ModalDrawerSheet {
-                    WoZDrawerContent(
-                        user
-                    )
-                }
+                WoZDrawerContent(
+                    user,
+                    onNavigationItemClick = { it ->
+                        onNavigationItemClick(it)
+                    }
+                )
+
+
             },
             content = content
         )

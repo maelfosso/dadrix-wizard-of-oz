@@ -11,12 +11,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.stockinos.mobile.wizardofoz.viewmodels.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessagesScreen(
     navController: NavController,
-    messagesViewModel: MessagesViewModel = viewModel()
+    messagesViewModel: MessagesViewModel,
+    homeViewModel: HomeViewModel
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -32,7 +34,7 @@ fun MessagesScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { homeViewModel.openDrawer(); Log.d("MessagesScreen", "Clicked on Menu") }) {
                         Icon(Icons.Filled.Menu, "ContentDescription")
                     }
                 },
@@ -45,7 +47,8 @@ fun MessagesScreen(
                     .fillMaxSize()
                     .wrapContentSize(),
                 navController = navController,
-                messagesViewModel = messagesViewModel
+                messagesViewModel = messagesViewModel,
+                openDrawer = { homeViewModel.openDrawer() }
             )
         }
     )
@@ -55,9 +58,9 @@ fun MessagesScreen(
 fun MessagesScreenContent(
     modifier: Modifier = Modifier,
     navController: NavController,
-    messagesViewModel: MessagesViewModel = viewModel()
+    messagesViewModel: MessagesViewModel = viewModel(),
+    openDrawer: () -> Unit
 ) {
-    Log.i("MessagesScreen", "MsgScreen : ${messagesViewModel.allMessages.value?.size}")
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background

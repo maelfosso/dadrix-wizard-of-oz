@@ -16,6 +16,7 @@ import com.stockinos.mobile.wizardofoz.ui.signin.SignInScreen
 import com.stockinos.mobile.wizardofoz.ui.signin.SignInViewModel
 import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPScreen
 import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPViewModel
+import com.stockinos.mobile.wizardofoz.viewmodels.HomeViewModel
 import com.stockinos.mobile.wizardofoz.viewmodels.TokenViewModel
 import com.tschwaa.mobile.SplashScreen
 
@@ -47,34 +48,11 @@ fun NavigationGuest(navController: NavHostController) {
                 signInOTPViewModel = viewModel(factory = SignInOTPViewModel.Factory)
             )
         }
-        // composable(route = Routes.Home.route) {
-        //     HomeScreen(navController = navController)
-        // }
-        // composable(route = Routes.Messages.route) {
-        //     MessagesScreen(
-        //         navController = navController,
-        //         messagesViewModel = viewModel(factory = MessagesViewModel.Factory)
-        //     )
-        // }
-        // composable(
-        //     route = Routes.Conversation.route + "/{phoneNumber}",
-        //     arguments = listOf(
-        //         navArgument("phoneNumber") {
-        //             type = NavType.StringType
-        //             defaultValue = ""
-        //         }
-        //     )
-        // ) { navBackStackEntry ->
-        //     ConversationScreen(
-        //         navController,
-        //         conversationViewModel = viewModel(factory = ConversationViewModel.Factory)
-        //     )
-        // }
     }
 }
 
 @Composable
-fun NavigationAuthenticated(navController: NavHostController) {
+fun NavigationAuthenticated(navController: NavHostController, homeViewModel: HomeViewModel) {
     NavHost(navController = navController, startDestination = Routes.Messages.route) {
         composable(route = Routes.Home.route) {
             HomeScreen(navController = navController)
@@ -82,7 +60,8 @@ fun NavigationAuthenticated(navController: NavHostController) {
         composable(route = Routes.Messages.route) {
             MessagesScreen(
                 navController = navController,
-                messagesViewModel = viewModel(factory = MessagesViewModel.Factory)
+                messagesViewModel = viewModel(factory = MessagesViewModel.Factory),
+                homeViewModel = homeViewModel, // viewModel(factory = HomeViewModel.Factory)
             )
         }
         composable(

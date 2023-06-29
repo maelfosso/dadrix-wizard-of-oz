@@ -2,24 +2,29 @@ package com.stockinos.mobile.wizardofoz
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.stockinos.mobile.wizardofoz.components.BackPressHandler
+import com.stockinos.mobile.wizardofoz.components.LocalBackPressedDispatcher
 import com.stockinos.mobile.wizardofoz.components.drawer.WoZDrawer
 import com.stockinos.mobile.wizardofoz.models.User
 import com.stockinos.mobile.wizardofoz.navigation.NavigationAuthenticated
 import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
+import com.stockinos.mobile.wizardofoz.viewmodels.HomeViewModel
 import kotlinx.coroutines.launch
 
 class HomeActivity : ComponentActivity() {
@@ -31,13 +36,19 @@ class HomeActivity : ComponentActivity() {
         }
     }
 
+    private val viewModel: HomeViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            HomeBaseView {
-                val navController = rememberNavController()
-                NavigationAuthenticated(navController = navController)
+            CompositionLocalProvider(
+                LocalBackPressedDispatcher provides this@HomeActivity.onBackPressedDispatcher
+            ) {
+                HomeBaseView(viewModel) {
+                    val navController = rememberNavController()
+                    NavigationAuthenticated(navController = navController, homeViewModel = viewModel)
+                }
             }
         }
     }
@@ -45,29 +56,48 @@ class HomeActivity : ComponentActivity() {
 
 @Composable
 fun HomeBaseView(
+    homeViewModel: HomeViewModel,
     content: @Composable () -> Unit
 ) {
+
     WizardOfOzTheme {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            // MessagesWidget(messagesViewModel = messagesViewModel)
-            val drawerState = rememberDrawerState(DrawerValue.Open)
+
+
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val scope = rememberCoroutineScope()
-            if (drawerState.isOpen) {
-                // BackPressHan
-            }
-            val openDrawer = {
-                scope.launch {
-                    drawerState.open()
+
+            // val drawerOpen by re
+            val drawerOpen by homeViewModel.drawerShouldBeOpened.collectAsStateWithLifecycle()
+            Log.d("HomeViewModel", "drawerOpen: $drawerOpen")
+            if (drawerOpen) {
+                LaunchedEffect(Unit) {
+                    try {
+                        Log.d("HomeViewModel", "Launched Effect Unit - drawer open()")
+                        drawerState.open()
+                    } finally {
+                        homeViewModel.resetOpenDrawerAction()
+                    }
                 }
             }
+            if (drawerState.isOpen) {
+                BackPressHandler {
+                    scope.launch { drawerState.close() }
+                }
+            }
+            // val items = listOf(Icons.Default.Favorite, Icons.Default.Face, Icons.Default.Email)
+            // val selectedItem = remember { mutableStateOf(items[0]) }
 
             WoZDrawer(
                 drawerState = drawerState,
-                user = User("Oz", "699002233")
+                user = User("Oz", "699002233"),
+                onNavigationItemClick = { it ->
+                    scope.launch { drawerState.close() }
+                }
             ) {
                 content()
             }
