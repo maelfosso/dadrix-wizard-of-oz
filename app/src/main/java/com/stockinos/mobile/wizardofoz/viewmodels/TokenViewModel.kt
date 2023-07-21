@@ -6,6 +6,8 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.stockinos.mobile.wizardofoz.WoZApplication
 import com.stockinos.mobile.wizardofoz.services.AuthManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -24,13 +26,14 @@ class TokenViewModel(
             }
         }
     }
-    val token = MutableLiveData<String?>()
+    private val _jwtToken = MutableStateFlow<String?>(null)
+    val jwtToken = _jwtToken.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             authManager.getToken().collect {
                 withContext(Dispatchers.Main) {
-                    token.value = it
+                    _jwtToken.value = it
                 }
             }
         }
@@ -47,4 +50,5 @@ class TokenViewModel(
             authManager.deleteToken()
         }
     }
+
 }

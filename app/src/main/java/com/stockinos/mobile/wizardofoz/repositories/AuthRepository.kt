@@ -9,11 +9,6 @@ import kotlinx.coroutines.flow.flow
 class AuthRepository(
     val woZAPI: WoZAPI
 ) {
-    // suspend fun getOTP(getOTPRequest: GetOTPRequest) =
-    //     flow {
-    //         emit(woZAPI.getOTP(getOTPRequest))
-    //     }
-
     fun getOTP(getOTPRequest: GetOTPRequest) = apiRequestFlow {
         woZAPI.getOTP(getOTPRequest)
     }
@@ -21,5 +16,10 @@ class AuthRepository(
     fun checkOTP(checkOTPRequest: CheckOTPRequest) =
         flow {
             emit(woZAPI.checkOTP(checkOTPRequest))
+        }
+
+    fun isTokenValid() =
+        flow {
+            emit(woZAPI.isTokenValid())
         }
 }

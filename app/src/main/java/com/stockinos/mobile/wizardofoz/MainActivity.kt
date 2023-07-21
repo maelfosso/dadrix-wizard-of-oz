@@ -1,6 +1,8 @@
 package com.stockinos.mobile.wizardofoz
 
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,6 +26,13 @@ import com.stockinos.mobile.wizardofoz.ui.messages.MessagesScreenContent
 import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
 
 class MainActivity : ComponentActivity() {
+    companion object {
+        fun startActivity(context: Context) {
+            context.startActivity(
+                Intent(context, MainActivity::class.java)
+            )
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

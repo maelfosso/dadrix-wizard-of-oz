@@ -17,20 +17,12 @@ import com.stockinos.mobile.wizardofoz.ui.signin.SignInViewModel
 import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPScreen
 import com.stockinos.mobile.wizardofoz.ui.signotp.SignInOTPViewModel
 import com.stockinos.mobile.wizardofoz.viewmodels.HomeViewModel
-import com.stockinos.mobile.wizardofoz.viewmodels.TokenViewModel
-import com.tschwaa.mobile.SplashScreen
 
 @Composable
 fun NavigationGuest(navController: NavHostController) {
     val TAG = "Navigation"
 
-    NavHost(navController = navController, startDestination = Routes.Splash.route) {
-        composable(route = Routes.Splash.route) {
-            SplashScreen(
-                navController = navController,
-                tokenViewModel = viewModel(factory = TokenViewModel.Factory)
-            )
-        }
+    NavHost(navController = navController, startDestination = Routes.SignIn.route) {
         composable(route = Routes.SignIn.route) {
             SignInScreen(
                 navController = navController,

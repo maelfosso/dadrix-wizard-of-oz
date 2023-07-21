@@ -56,6 +56,9 @@ interface WoZAPI {
     suspend fun checkOTP(@Body checkOTPRequest: CheckOTPRequest): Response<CheckOTPResponse>
     @POST("/auth/otp/resend")
     suspend fun resendOTP(@Body getOTPRequest: GetOTPRequest)
-    @POST("/auth/token/refresh")
+
+    @POST("/token/refresh")
     suspend fun refreshToken(@Header("Authorization") token: String): Response<RefreshTokenResponse>
+    @POST("/token/valid")
+    suspend fun isTokenValid(): Response<Boolean>
 }
