@@ -2,31 +2,31 @@ package com.stockinos.mobile.wizardofoz
 
 import android.content.Context
 import androidx.room.Database
+import androidx.room.DeleteTable
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.AutoMigrationSpec
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.stockinos.mobile.wizardofoz.dao.IWhatsappMessageDao
-import com.stockinos.mobile.wizardofoz.dao.WhatsappMessageDao
-import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
-import com.stockinos.mobile.wizardofoz.models.WhatsappMessageAudio
-import com.stockinos.mobile.wizardofoz.models.WhatsappMessageImage
-import com.stockinos.mobile.wizardofoz.models.WhatsappMessageText
+import com.stockinos.mobile.wizardofoz.dao.IUserDao
+import com.stockinos.mobile.wizardofoz.dao.IMessageDao
+import com.stockinos.mobile.wizardofoz.models.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = arrayOf(
-        WhatsappMessage::class,
-        WhatsappMessageText::class,
-        WhatsappMessageImage::class,
-        WhatsappMessageAudio::class
-    ),
-    version = 5,
+    entities = [
+        User::class,
+        Message::class,
+        MessageText::class,
+        MessageImage::class,
+        MessageAudio::class
+   ],
+    version = 12,
     exportSchema = true
 )
 public abstract class WoZRoomDatabase: RoomDatabase() {
-    abstract fun whatsappMessageDao(): IWhatsappMessageDao
-
+    abstract fun messageDao(): IMessageDao
+    abstract fun userDao(): IUserDao
 
     private class WozDatabaseCallback(
         private val scope: CoroutineScope
@@ -40,18 +40,18 @@ public abstract class WoZRoomDatabase: RoomDatabase() {
             INSTANCE?.let { database ->
                 scope.launch {
                     // database.
-                    populateDatabase(database.whatsappMessageDao())
+                    populateDatabase(database.messageDao())
                 }
             }
         }
 
-        fun populateDatabase(whatsappMessageDao: IWhatsappMessageDao) {
+        fun populateDatabase(messageDao: IMessageDao) {
             // Delete all content here
-            // whatsappMessageDao.getWhatsappMessagesAboutUser()
+            // messageDao.getMessagesAboutUser()
 
             // Add some sample message
-            // var msg = WhatsappMessage()
-            // whatsappMessageDao.insert(msg)
+            // var msg = Message()
+            // messageDao.insert(msg)
         }
     }
 

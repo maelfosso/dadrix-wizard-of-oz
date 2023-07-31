@@ -1,12 +1,15 @@
 package com.stockinos.mobile.wizardofoz
 
 import com.google.gson.Gson
-import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
+import com.stockinos.mobile.wizardofoz.models.User
+import com.stockinos.mobile.wizardofoz.models.Message
 import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationUiState
-import com.stockinos.mobile.wizardofoz.ui.messages.MessagesByUser
+import com.stockinos.mobile.wizardofoz.ui.messages.MessagesAboutUser
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 // how to use Figma because I am watching you using it with Material
-val whatsappMessageText = """
+val messageText = """
 {
     id: 'wamid.HBgMMjM3Njc4OTA4OTg5FQIAEhggREZERDlCM0FERTZCRENGNTNFRTY4NzU3MTYxNEI0M0YA',
     from: 'Stock Inos',
@@ -45,15 +48,13 @@ val whatsappMessageText = """
 """
 
 val message = Gson().fromJson(
-    whatsappMessageText,
-    WhatsappMessage::class.java
+    messageText,
+    Message::class.java
 )
-val messageByUser = MessagesByUser(
-    "John DOE",
+val messageByUser = MessagesAboutUser(
+    User("John DOE", phoneNumber = "+237690238423"),
     listOf(message),
     49
 )
 
 val messages = listOf(message)
-
-val exampleConversationUiState = ConversationUiState(messagesItems = messages, user = "inner")

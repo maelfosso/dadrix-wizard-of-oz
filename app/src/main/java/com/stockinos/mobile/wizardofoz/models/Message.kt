@@ -1,23 +1,25 @@
 package com.stockinos.mobile.wizardofoz.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
-@Entity(tableName = "whatsapp_messages")
-data class WhatsappMessage (
+@Entity(tableName = "messages")
+data class Message (
 
     @PrimaryKey
     @SerializedName("id")
     val id: String,
+
+    // @Embedded(prefix = "from_")
     @SerializedName("from")
-    val from: String,
+    val from: String, // User,
+
+    // @Embedded(prefix = "to_")
     @SerializedName("to")
+    // @ColumnInfo(defaultValue = "+000")
     val to: String? = null,
+
     @SerializedName("timestamp")
     val timestamp: String,
 
@@ -27,27 +29,30 @@ data class WhatsappMessage (
     @SerializedName("text_id", alternate = ["textid", "textId"])
     val textId: String? = null,
     @SerializedName("text")
-    @Embedded val text: WhatsappMessageText? = null,
+    @Embedded val text: MessageText? = null,
 
     @SerializedName("image_id")
     val imageId: String? = null,
     @SerializedName("image")
-    @Embedded val image: WhatsappMessageImage? = null,
+    @Embedded val image: MessageImage? = null,
 
     @SerializedName("audio_id")
     val audioId: String? = null,
     @SerializedName("audio")
-    @Embedded val audio: WhatsappMessageAudio? = null,
+    @Embedded val audio: MessageAudio? = null,
 ) {
     var state: String? = "unknown"
         get() = field ?: "unknown"
 
     @Ignore
-    var receivedDate: Date = Date(timestamp.toLong())
+    var iTimestamp: Long = timestamp.toLong()
+
+    @Ignore
+    var mTimestamp: Date = Date(timestamp.toLong())
 }
 
-@Entity(tableName = "whatsapp_messages_texts")
-data class WhatsappMessageText (
+@Entity(tableName = "messages_texts")
+data class MessageText (
     @PrimaryKey
     @ColumnInfo(name = "text_id")
     @SerializedName("id")
@@ -56,8 +61,8 @@ data class WhatsappMessageText (
     val body: String
 )
 
-@Entity(tableName = "whatsapp_messages_images")
-data class WhatsappMessageImage (
+@Entity(tableName = "messages_images")
+data class MessageImage (
     @PrimaryKey
     @ColumnInfo(name = "image_id")
     @SerializedName("id")
@@ -75,8 +80,8 @@ data class WhatsappMessageImage (
 
 )
 
-@Entity(tableName = "whatsapp_messages_audios")
-data class WhatsappMessageAudio (
+@Entity(tableName = "messages_audios")
+data class MessageAudio (
     @PrimaryKey
     @ColumnInfo(name = "audio_id")
     @SerializedName("id")
@@ -91,4 +96,21 @@ data class WhatsappMessageAudio (
     val sha256    : String?,
     @SerializedName("voice")
     val voice     : Boolean?
+)
+
+
+data class MessageWithUser (
+    @Embedded val message: Message,
+
+    @Relation(
+        parentColumn = "from",
+        entityColumn = "phone_number"
+    )
+    val from: User,
+
+    @Relation(
+        parentColumn = "to",
+        entityColumn = "phone_number"
+    )
+    val to: User,
 )

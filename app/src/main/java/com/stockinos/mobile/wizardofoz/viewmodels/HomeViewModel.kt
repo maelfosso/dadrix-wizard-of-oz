@@ -20,7 +20,7 @@ class HomeViewModel: ViewModel() {
         }
     }
 
-    private val _drawerShouldBeOpened = MutableStateFlow(true)
+    private val _drawerShouldBeOpened = MutableStateFlow(false)
     val drawerShouldBeOpened = _drawerShouldBeOpened.asStateFlow()
 
     fun openDrawer() {

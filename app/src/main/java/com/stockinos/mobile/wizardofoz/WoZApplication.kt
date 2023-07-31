@@ -8,8 +8,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
 import com.stockinos.mobile.wizardofoz.api.WoZAPI
-import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
-import com.stockinos.mobile.wizardofoz.dao.WhatsappMessageDao
+import com.stockinos.mobile.wizardofoz.api.models.requests.OnWhatsappMessageReceived
+import com.stockinos.mobile.wizardofoz.dao.UserDao
+import com.stockinos.mobile.wizardofoz.models.Message
+import com.stockinos.mobile.wizardofoz.dao.MessageDao
 import com.stockinos.mobile.wizardofoz.repositories.AuthRepository
 import com.stockinos.mobile.wizardofoz.utils.Constants
 import io.socket.client.IO
@@ -41,7 +43,8 @@ class WoZApplication: Application() {
     // Using by lazy so the database and the repository are only created when they're need
     // rather than when the application starts
     private val database by lazy { WoZRoomDatabase.getDatabase(this, applicationScope) }
-    val whatsappMessageDao by lazy { WhatsappMessageDao(database.whatsappMessageDao()) }
+    val messageDao by lazy { MessageDao(database.messageDao(), database.userDao()) }
+    val userDao by lazy { UserDao(database.userDao()) }
     val authRepository by lazy { AuthRepository(WoZAPI.getInstance()) }
 
     private var _mSocket: Socket? = null
@@ -60,19 +63,18 @@ class WoZApplication: Application() {
         }
     val mSocket: Socket = _mSocket!!
 
-    private var onWhatsappMessageReceived = Emitter.Listener {
+    private var onMessageReceived = Emitter.Listener {
         Log.d(TAG, "on whatsapp:message:received before : ${it[0]}")
-        val data = Gson().fromJson(it[0].toString(), WhatsappMessage::class.java)
+        val data = Gson().fromJson(it[0].toString(), OnWhatsappMessageReceived::class.java)
         Log.d(TAG, "on whatsapp:message:received : $data")
 
-        whatsappMessageDao.insert(data)
-//        Log.d(TAG, "NB Items : ${repository.allWhatsappMessages.count()}")
+        messageDao.insert(data)
     }
 
     fun connectSocket() {
         Log.i(TAG, "connectSocket() - ${_mSocket == null}")
 
-        _mSocket?.on("whatsapp:message:received", onWhatsappMessageReceived)
+        _mSocket?.on("whatsapp:message:received", onMessageReceived)
         _mSocket?.connect()
             ?.on(Socket.EVENT_CONNECT) {
                 Log.i(TAG, "connected")
@@ -80,7 +82,6 @@ class WoZApplication: Application() {
                 // sent an authentication message to say that it's an Oscar-ian
             }
             ?.on(Socket.EVENT_DISCONNECT) { Log.i(TAG, "disconnected") }
-
     }
 
     fun disconnectSocket() {
@@ -90,6 +91,7 @@ class WoZApplication: Application() {
     fun emitNotice(msg: String) {
         _mSocket?.emit("notice", msg)
     }
+
     private fun setupSocket() {
         Log.i(TAG, "setupSocket")
         // Setup Listener

@@ -6,8 +6,9 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.google.gson.Gson
 import com.stockinos.mobile.wizardofoz.WoZApplication
-import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
-import com.stockinos.mobile.wizardofoz.dao.WhatsappMessageDao
+import com.stockinos.mobile.wizardofoz.api.models.requests.OnWhatsappMessageReceived
+import com.stockinos.mobile.wizardofoz.models.Message
+import com.stockinos.mobile.wizardofoz.dao.MessageDao
 import com.stockinos.mobile.wizardofoz.services.AuthManager
 import io.socket.client.Ack
 import io.socket.client.Socket
@@ -16,7 +17,7 @@ import kotlinx.coroutines.flow.*
 
 class ConversationViewModel(
     savedStateHandle: SavedStateHandle,
-    val whatsappMessageDao: WhatsappMessageDao,
+    val messageDao: MessageDao,
     val socket: Socket,
     val authManager: AuthManager,
 ): ViewModel() {
@@ -26,11 +27,11 @@ class ConversationViewModel(
             initializer {
                 val savedStateHandle = createSavedStateHandle()
                 // val myRepository = (this[APPLICATION_KEY] as MyApplication).myRepository
-                val whatsappMessageDao = WoZApplication.getAppInstance().whatsappMessageDao
+                val messageDao = WoZApplication.getAppInstance().messageDao
                 val mSocket = WoZApplication.getAppInstance().mSocket
                 ConversationViewModel(
                     savedStateHandle,
-                    whatsappMessageDao = whatsappMessageDao,
+                    messageDao = messageDao,
                     socket = mSocket,
                     authManager = AuthManager(WoZApplication.getAppInstance().applicationContext),
                 )
@@ -44,7 +45,7 @@ class ConversationViewModel(
 
     init {
         viewModelScope.launch {
-            whatsappMessageDao.allWhatsappMessagesAboutUser(user).collect() { messages ->
+            messageDao.allMessagesAboutUser(user).collect() { messages ->
                 _uiState.update { it.copy(messagesItems = messages) }
             }
         }
@@ -67,9 +68,9 @@ class ConversationViewModel(
                 Gson().toJson(message),
                 Ack {
                     Log.d("Send Message Text", it[0].toString())
-                    val data = Gson().fromJson(it[0].toString(), WhatsappMessage::class.java)
+                    val data = Gson().fromJson(it[0].toString(), OnWhatsappMessageReceived::class.java)
                     Log.d("Send Message Text", "on whatsapp:message:received : $data")
-                    whatsappMessageDao.insert(data)
+                    messageDao.insert(data)
                 }
             )
         }

@@ -1,10 +1,7 @@
 package com.stockinos.mobile.wizardofoz.ui.conversation
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,7 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,20 +26,16 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.stockinos.mobile.wizardofoz.R
-import com.stockinos.mobile.wizardofoz.exampleConversationUiState
-import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
+import com.stockinos.mobile.wizardofoz.models.Message
+import com.stockinos.mobile.wizardofoz.models.MessageWithUser
 import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -135,7 +127,7 @@ fun ConversationScreenContent(
 
 @Composable
 fun Messages(
-    messages: List<WhatsappMessage>,
+    messages: List<MessageWithUser>,
     author: String,
     scrollState: LazyListState,
     modifier: Modifier = Modifier
@@ -175,7 +167,7 @@ fun Messages(
                     Message(
                         onAuthorClick = { name -> },
                         message = content,
-                        isUserMe = content.from == author,
+                        isUserMe = content.from.phoneNumber == author,
                         isFirstMessageByAuthor = isFirstMessageByAuthor,
                         isLastMessageByAuthor = isLastMessageByAuthor
                     )
@@ -188,7 +180,7 @@ fun Messages(
 @Composable
 fun Message(
     onAuthorClick: (String) -> Unit,
-    message: WhatsappMessage,
+    message: MessageWithUser,
     isUserMe: Boolean,
     isFirstMessageByAuthor: Boolean,
     isLastMessageByAuthor: Boolean
@@ -239,7 +231,7 @@ fun Message(
 
 @Composable
 fun AuthorAndTextMessage(
-    message: WhatsappMessage,
+    message: MessageWithUser,
     isUserMe: Boolean,
     isFirstMessageByAuthor: Boolean,
     isLastMessageByAuthor: Boolean,
@@ -262,11 +254,11 @@ fun AuthorAndTextMessage(
 }
 
 @Composable
-private fun AuthorNameTimestamp(message: WhatsappMessage) {
+private fun AuthorNameTimestamp(message: MessageWithUser) {
     // Combine author and timestamp for a11y
     Row(modifier = Modifier.semantics(mergeDescendants = true) {}) {
         Text(
-            text = message.from,
+            text = message.from.name,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
                 .alignBy(LastBaseline)
@@ -286,7 +278,7 @@ private val ChatBubbleShape = RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp)
 
 @Composable
 fun ChatItemBubble(
-    message: WhatsappMessage,
+    message: MessageWithUser,
     isUserMe: Boolean,
     authorClicked: (String) -> Unit
 ) {
@@ -297,7 +289,7 @@ fun ChatItemBubble(
     }
 
     val sdf = SimpleDateFormat("HH:mm")
-    val netDate = Date(message.timestamp.toLong() * 1000)
+    val netDate = Date(message.message.timestamp.toLong() * 1000)
 //    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Surface(
             color = backgroundBubbleColor,
@@ -306,15 +298,15 @@ fun ChatItemBubble(
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
-                if (message.textId != null) {
+                if (message.message.textId != null) {
                     ClickableMessage(
-                        message = message,
+                        message = message.message,
                         isUserMe = isUserMe,
                         authorClicked = authorClicked
                     )
                 }
 
-                if (message.imageId != null) {
+                if (message.message.imageId != null) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Surface(
                         color = backgroundBubbleColor,
@@ -339,7 +331,7 @@ fun ChatItemBubble(
                         if (!isUserMe) {
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = message.state.toString(),
+                                text = message.message.state.toString(),
                                 style = MaterialTheme.typography.bodySmall,
                             )
                         }
@@ -351,22 +343,22 @@ fun ChatItemBubble(
 }
 
 
-@Preview
-@Composable
-fun ChatItemBubblePreview() {
-    WizardOfOzTheme {
-        // Messages(messages = exampleConversationUiState.messagesItems)
-        ChatItemBubble(
-            message = exampleConversationUiState.messagesItems[0],
-            isUserMe = false,
-            authorClicked = {}
-        )
-    }
-}
+// @Preview
+// @Composable
+// fun ChatItemBubblePreview() {
+//     WizardOfOzTheme {
+//         // Messages(messages = exampleConversationUiState.messagesItems)
+//         ChatItemBubble(
+//             message = exampleConversationUiState.messagesItems[0],
+//             isUserMe = false,
+//             authorClicked = {}
+//         )
+//     }
+// }
 
 @Composable
 fun ClickableMessage(
-    message: WhatsappMessage,
+    message: Message,
     isUserMe: Boolean,
     authorClicked: (String) -> Unit
 ) {

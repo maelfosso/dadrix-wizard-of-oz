@@ -1,6 +1,5 @@
-package com.stockinos.mobile.wizardofoz.ui
+package com.stockinos.mobile.wizardofoz.ui.messages
 
-import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -17,23 +16,31 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.stockinos.mobile.wizardofoz.messageByUser
-import com.stockinos.mobile.wizardofoz.ui.messages.MessagesByUser
+import com.stockinos.mobile.wizardofoz.models.User
+import com.stockinos.mobile.wizardofoz.utils.width
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun MessageItem(
-    message: MessagesByUser,
+    message: MessagesAboutUser,
     modifier: Modifier = Modifier,
     onClick: (user: String) -> Unit
 ) {
-    val TAG: String = "MessageItem"
+    val TAG = "MessageItem"
     val context = LocalContext.current
 
-    Log.d(TAG, "Message: $message")
+    val user = message.user
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -47,11 +54,18 @@ fun MessageItem(
                     end = Offset(size.width, y),
                     strokeWidth = borderSize
                 )
-            }.clickable (
+            }
+            .clickable(
                 onClick = {
-                    Toast.makeText(context,"Opening messages from ${message.user}",Toast.LENGTH_LONG).show()
-                    Log.v(TAG,"Opening messages from ${message.user}")
-                    onClick(message.user)
+                    Toast
+                        .makeText(
+                            context,
+                            "Opening messages from ${user.name.ifEmpty { user.phoneNumber }}",
+                            Toast.LENGTH_LONG
+                        )
+                        .show()
+                    Log.v(TAG, "Opening messages from ${message.user}")
+                    onClick(user.phoneNumber)
                 }
             )
     ) {
@@ -75,7 +89,9 @@ fun MessageItem(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = message.user.uppercase()[0].toString(),
+                    text = (
+                        user.name.ifEmpty { user.phoneNumber }
+                    ).uppercase()[0].toString(),
                     style = TextStyle(
                         fontWeight = FontWeight.W500,
                         fontSize = 16.sp,
@@ -86,16 +102,14 @@ fun MessageItem(
                 )
             }
             Column {
-                Text(
-                    text = message.user,
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W500,
-                        letterSpacing = 0.5.sp,
-                        lineHeight = 24.sp,
-                        color = Color(0xFF1C1B1F)
-                    )
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Author(user = user)
+                    LastMessageTime(message.lastMessage.timestamp)
+                }
+
                 Row (
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -139,8 +153,140 @@ fun MessageItem(
         }
     }
 }
+
+@Composable
+fun Author(user: User) {
+    if (user.name.isNotEmpty() && user.name.isNotBlank()) {
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = user.name,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W500,
+                    letterSpacing = 0.5.sp,
+                    lineHeight = 24.sp,
+                    color = Color(0xFF1C1B1F)
+                )
+            )
+            5.width()
+            Text(
+                text = user.phoneNumber,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.W300,
+                    fontStyle = FontStyle.Italic,
+                    letterSpacing = 0.5.sp,
+                    lineHeight = 24.sp,
+                    color = Color(0xFF1C1B1F)
+                )
+            )
+        }
+    } else {
+        Text(
+            text = user.phoneNumber,
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.W500,
+                letterSpacing = 0.5.sp,
+                lineHeight = 24.sp,
+                color = Color(0xFF1C1B1F)
+            )
+        )
+    }
+}
+
+@Composable
+fun LastMessageTime(timestamp: String) {
+    val time = timestamp.toLongOrNull()
+    timeAgo(time!!)?.let {
+        Text(
+            text = it,
+            style = TextStyle(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W400,
+                letterSpacing = 0.25.sp,
+                lineHeight = 20.sp,
+                color = Color(0xFF49454F)
+            )
+        )
+    }
+}
+
+fun timestampToMilli(time: Long): Long {
+    return if (time < 1000000000000L) {
+        // if timestamp given in seconds, convert to millis
+        time * 1000
+    } else {
+        time
+    }
+}
+
+fun timeAgo(time: Long): String? {
+    val mTime = timestampToMilli(time)
+    val currentTime = System.currentTimeMillis()
+    if (mTime > currentTime || mTime <= 0) return null
+    val timeElapsed = currentTime - mTime
+    val thisDay: Int = SimpleDateFormat("dd", Locale.US).format(currentTime).toInt()
+    val thisMonth: Int = SimpleDateFormat("MM", Locale.US).format(currentTime).toInt()
+    val thisYear: Int = SimpleDateFormat("yyy", Locale.US).format(currentTime).toInt()
+    val agoDay: Int = SimpleDateFormat("dd", Locale.US).format(mTime).toInt()
+    val agoMonth: Int = SimpleDateFormat("MM", Locale.US).format(mTime).toInt()
+    val agoYear: Int = SimpleDateFormat("yyy", Locale.US).format(mTime).toInt()
+
+    val seconds = timeElapsed
+    val minutes = Math.round((timeElapsed / 60000).toDouble()).toInt()
+    val hours = Math.round((timeElapsed / 3600000).toDouble()).toInt()
+    val days = Math.round((timeElapsed / 86400000).toDouble()).toInt()
+    val weeks = Math.round((timeElapsed / 604800000).toDouble()).toInt()
+    val months = Math.round((timeElapsed / 2600640000).toDouble()).toInt()
+    val years = Math.round((timeElapsed / 31207680000).toDouble()).toInt()
+    // Yesterday
+    if ((thisYear - agoYear) >= 1) {
+        return SimpleDateFormat("MMM dd, yyyy - hh:ma", Locale.US).format(mTime)
+    } else if ((thisMonth - agoMonth) >= 1) {
+        return SimpleDateFormat("MMM dd", Locale.US).format(mTime)
+    } else if (thisMonth == agoMonth && (thisDay - agoDay) == 1) {
+        return "Yesterday"
+    } // Seconds
+    else if (seconds <= 60) {
+        return "just now"
+    } // Minutes
+    else if (minutes <= 60) {
+        return if (minutes == 1) {
+            "one minute ago"
+        } else {
+            "${minutes}min ago"
+        }
+    } // Hours
+    else if (hours <= 24) {
+        return if (hours == 1) {
+            "an hour and " + (minutes - 60) + "min ago"
+        } else {
+            "$hours hrs ago"
+        }
+    } // Days
+    else if (days <= 7) {
+        return if (days == 1) {
+            "$days day and " + (hours - 24) + "hrs ago"
+        } else {
+            "$days days ago"
+        }
+    } // Weeks
+    else if (weeks <= 4.3) {
+        return if (weeks == 1) {
+            "a week ago"
+        } else {
+            "$weeks weeks ago"
+        }
+    }
+    return null
+}
+
 // how to use Figma because I am watching you using it with Material
-fun whatsappMessageText() = """
+fun messageText() = """
 {
     id: 'wamid.HBgMMjM3Njc4OTA4OTg5FQIAEhggREZERDlCM0FERTZCRENGNTNFRTY4NzU3MTYxNEI0M0YA',
     from: 'Stock Inos',
@@ -177,7 +323,6 @@ fun whatsappMessageText() = """
     }
 }
 """
-
 
 @Preview(showBackground = true)
 @Composable

@@ -1,6 +1,7 @@
 package com.stockinos.mobile.wizardofoz.ui.signotp
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -72,6 +73,8 @@ fun SignInOTPScreen(
                         signInOTPViewModel.checkOTP {
                             // navController.navigate(Routes.Messages.route)
                             HomeActivity.startActivity(context)
+
+                            (context as Activity).finish()
                         }
                     }
                 )
@@ -251,4 +254,3 @@ fun DefaultPreview() {
             signInOTPViewModel = viewModel(factory = SignInOTPViewModel.Factory))
     }
 }
-

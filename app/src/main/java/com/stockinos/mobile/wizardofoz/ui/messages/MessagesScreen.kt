@@ -34,7 +34,7 @@ fun MessagesScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { homeViewModel.openDrawer(); Log.d("MessagesScreen", "Clicked on Menu") }) {
+                    IconButton(onClick = { homeViewModel.openDrawer() }) {
                         Icon(Icons.Filled.Menu, "ContentDescription")
                     }
                 },

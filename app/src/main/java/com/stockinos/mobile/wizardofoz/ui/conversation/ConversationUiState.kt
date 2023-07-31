@@ -1,12 +1,9 @@
 package com.stockinos.mobile.wizardofoz.ui.conversation
 
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.toMutableStateList
-import androidx.lifecycle.LiveData
-import com.stockinos.mobile.wizardofoz.models.WhatsappMessage
+import com.stockinos.mobile.wizardofoz.models.Message
+import com.stockinos.mobile.wizardofoz.models.MessageWithUser
 
 data class ConversationUiState(
-    val messagesItems: List<WhatsappMessage> = listOf(),
+    val messagesItems: List<MessageWithUser> = listOf(),
     val user: String
 )

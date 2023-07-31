@@ -9,23 +9,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.LiveData
-import com.stockinos.mobile.wizardofoz.ui.MessageItem
 
 @Composable
 fun MessagesList(
-    messagesLiveData: LiveData<List<MessagesByUser>>,
+    messagesLiveData: LiveData<List<MessagesAboutUser>>,
     onMessageItemClicked: (user: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val messages by messagesLiveData.observeAsState(initial = emptyList())
-    Log.i("MessagesList", "Count Messages ${messagesLiveData.value?.size.toString()}")
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.Top
     ) {
         items(
             items = messages,
-            key = { message -> message.user },
+            key = { message -> message.user.phoneNumber },
         ) { message ->
             MessageItem(message = message, onClick = { onMessageItemClicked(it) })
         }
