@@ -13,6 +13,7 @@ class AuthManager(private val context: Context) {
         private val TOKEN_KEY = stringPreferencesKey("jwt_token")
         private val NAME_KEY = stringPreferencesKey("name")
         private val PHONE_NUMBER_KEY = stringPreferencesKey("phone_number")
+        private val TYPE_KEY = stringPreferencesKey("type")
     }
 
     fun getToken(): Flow<String?> {
@@ -37,7 +38,8 @@ class AuthManager(private val context: Context) {
         return context.dataStore.data.map { preferences ->
             User(
                 name = preferences[NAME_KEY]?:"",
-                phoneNumber = preferences[PHONE_NUMBER_KEY]?:""
+                phoneNumber = preferences[PHONE_NUMBER_KEY]?:"",
+                type = preferences[TYPE_KEY]?:"",
             )
         }
     }
@@ -46,6 +48,7 @@ class AuthManager(private val context: Context) {
         context.dataStore.edit{ preferences ->
             preferences[NAME_KEY] = user.name
             preferences[PHONE_NUMBER_KEY] = user.phoneNumber
+            preferences[TYPE_KEY] = user.type
         }
     }
 

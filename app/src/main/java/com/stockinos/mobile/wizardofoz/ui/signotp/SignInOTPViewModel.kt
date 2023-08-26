@@ -90,7 +90,8 @@ class SignInOTPViewModel(
 
                         val user = User(
                             name = checkOTPResponse.name,
-                            phoneNumber = checkOTPResponse.phoneNumber
+                            phoneNumber = checkOTPResponse.phoneNumber,
+                            type = checkOTPResponse.type,
                         )
                         val token = checkOTPResponse.token
                         authManager.saveUser(user)

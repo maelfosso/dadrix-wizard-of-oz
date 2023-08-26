@@ -12,7 +12,11 @@ data class User(
     @PrimaryKey
     @SerializedName("phone_number", alternate = ["phoneNumber"])
     @ColumnInfo(name = "phone_number")
-    val phoneNumber: String
+    val phoneNumber: String,
+
+    @SerializedName("type")
+    @ColumnInfo(name = "type")
+    val type: String
 )
 
 data class UserWithSentMessages(

@@ -85,6 +85,7 @@ class SignInViewModel(
             phoneNumber = _uiState.value.phoneNumber,
             language = "en"
         )
+        Log.d("SignInVM", "Get otp request : $getOTPRequest")
         authRepository.getOTP(getOTPRequest)
     }
 }

@@ -52,7 +52,7 @@ val message = Gson().fromJson(
     Message::class.java
 )
 val messageByUser = MessagesAboutUser(
-    User("John DOE", phoneNumber = "+237690238423"),
+    User("John DOE", phoneNumber = "+237690238423", type = "customer"),
     listOf(message),
     49
 )

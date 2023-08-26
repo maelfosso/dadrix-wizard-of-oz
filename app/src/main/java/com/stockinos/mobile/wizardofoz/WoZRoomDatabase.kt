@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
         MessageImage::class,
         MessageAudio::class
    ],
-    version = 12,
+    version = 1,
     exportSchema = true
 )
 public abstract class WoZRoomDatabase: RoomDatabase() {

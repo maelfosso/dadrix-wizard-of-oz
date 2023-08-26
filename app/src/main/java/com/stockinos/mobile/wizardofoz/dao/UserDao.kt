@@ -24,6 +24,7 @@ class UserDao(private val userDao: IUserDao) {
             (sent + received)
                 .groupBy ({ it.user }, { it.messages })
                 .mapValues { (_, values) -> values.flatten() }
+                .filterKeys { it.type == "customer" }
                 .map { (user, messages) ->
                     Log.d(TAG, "Map. User: $user. Messages: $messages")
                     MessagesAboutUser(

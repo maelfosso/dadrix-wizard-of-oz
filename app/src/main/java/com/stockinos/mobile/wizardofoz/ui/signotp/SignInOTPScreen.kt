@@ -71,7 +71,6 @@ fun SignInOTPScreen(
                     },
                     onCheckOTP = {
                         signInOTPViewModel.checkOTP {
-                            // navController.navigate(Routes.Messages.route)
                             HomeActivity.startActivity(context)
 
                             (context as Activity).finish()
