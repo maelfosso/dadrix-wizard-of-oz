@@ -89,6 +89,7 @@ class SignInOTPViewModel(
 
 
                         val user = User(
+                            id = checkOTPResponse.id,
                             name = checkOTPResponse.name,
                             phoneNumber = checkOTPResponse.phoneNumber,
                             type = checkOTPResponse.type,

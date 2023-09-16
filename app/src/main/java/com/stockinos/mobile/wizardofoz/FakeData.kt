@@ -3,10 +3,8 @@ package com.stockinos.mobile.wizardofoz
 import com.google.gson.Gson
 import com.stockinos.mobile.wizardofoz.models.User
 import com.stockinos.mobile.wizardofoz.models.Message
-import com.stockinos.mobile.wizardofoz.ui.conversation.ConversationUiState
+import com.stockinos.mobile.wizardofoz.models.USER_TYPE_CUSTOMER
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesAboutUser
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 // how to use Figma because I am watching you using it with Material
 val messageText = """
@@ -51,10 +49,10 @@ val message = Gson().fromJson(
     messageText,
     Message::class.java
 )
-val messageByUser = MessagesAboutUser(
-    User("John DOE", phoneNumber = "+237690238423", type = "customer"),
-    listOf(message),
-    49
-)
+// val messageByUser = MessagesAboutUser(
+//     User(0, "John DOE", phoneNumber = "+237690238423", type = USER_TYPE_CUSTOMER),
+//     listOf(message),
+//     49
+// )
 
 val messages = listOf(message)

@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
         MessageImage::class,
         MessageAudio::class
    ],
-    version = 1,
+    version = 6,
     exportSchema = true
 )
 public abstract class WoZRoomDatabase: RoomDatabase() {
@@ -70,6 +70,7 @@ public abstract class WoZRoomDatabase: RoomDatabase() {
                     WoZRoomDatabase::class.java,
                     "woz_database"
                 )
+                    .allowMainThreadQueries()
                     .fallbackToDestructiveMigration()
                     .addCallback(WozDatabaseCallback(scope))
                     .build()

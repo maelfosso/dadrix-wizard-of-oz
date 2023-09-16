@@ -94,7 +94,7 @@ fun HomeBaseView(
 
             WoZDrawer(
                 drawerState = drawerState,
-                user = User("Oz", "699002233", "oz"),
+                user = User(0, "Oz", "699002233", "oz"),
                 onNavigationItemClick = { it ->
                     scope.launch { drawerState.close() }
                 }

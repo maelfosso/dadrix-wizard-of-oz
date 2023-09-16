@@ -2,10 +2,14 @@ package com.stockinos.mobile.wizardofoz.models
 
 import androidx.room.*
 import com.google.gson.annotations.SerializedName
-import com.stockinos.mobile.wizardofoz.navigation.Routes
+
+const val USER_TYPE_CUSTOMER = "customer"
 
 @Entity(tableName = "users")
 data class User(
+    @SerializedName("ID", alternate = ["id"])
+    val id: Int,
+
     @SerializedName("name")
     val name: String,
 

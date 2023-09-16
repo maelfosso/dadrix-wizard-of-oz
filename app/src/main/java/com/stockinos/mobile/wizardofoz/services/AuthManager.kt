@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.map
 class AuthManager(private val context: Context) {
     companion object {
         private val TOKEN_KEY = stringPreferencesKey("jwt_token")
+        private val ID_KEY = stringPreferencesKey("id")
         private val NAME_KEY = stringPreferencesKey("name")
         private val PHONE_NUMBER_KEY = stringPreferencesKey("phone_number")
         private val TYPE_KEY = stringPreferencesKey("type")
@@ -37,6 +38,7 @@ class AuthManager(private val context: Context) {
     fun getUser(): Flow<User> {
         return context.dataStore.data.map { preferences ->
             User(
+                id = (preferences[ID_KEY]?: -1) as Int,
                 name = preferences[NAME_KEY]?:"",
                 phoneNumber = preferences[PHONE_NUMBER_KEY]?:"",
                 type = preferences[TYPE_KEY]?:"",
@@ -46,6 +48,7 @@ class AuthManager(private val context: Context) {
 
     suspend fun saveUser(user: User) {
         context.dataStore.edit{ preferences ->
+            preferences[ID_KEY] = user.id.toString()
             preferences[NAME_KEY] = user.name
             preferences[PHONE_NUMBER_KEY] = user.phoneNumber
             preferences[TYPE_KEY] = user.type

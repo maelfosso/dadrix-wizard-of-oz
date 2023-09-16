@@ -5,6 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class CheckOTPResponse(
+    @Json(name = "id") val id: Int,
     @Json(name = "name") val name: String,
     @Json(name = "phone_number") val phoneNumber: String,
     @Json(name = "type") val type: String,

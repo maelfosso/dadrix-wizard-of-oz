@@ -44,7 +44,7 @@ class WoZApplication: Application() {
     // rather than when the application starts
     private val database by lazy { WoZRoomDatabase.getDatabase(this, applicationScope) }
     val messageDao by lazy { MessageDao(database.messageDao(), database.userDao()) }
-    val userDao by lazy { UserDao(database.userDao()) }
+    val userDao by lazy { UserDao(database.userDao(), database.messageDao()) }
     val authRepository by lazy { AuthRepository(WoZAPI.getInstance()) }
 
     private var _mSocket: Socket? = null

@@ -3,8 +3,7 @@ package com.stockinos.mobile.wizardofoz.dao
 import android.util.Log
 import androidx.annotation.WorkerThread
 import com.stockinos.mobile.wizardofoz.api.models.requests.OnWhatsappMessageReceived
-import com.stockinos.mobile.wizardofoz.models.Message
-import com.stockinos.mobile.wizardofoz.models.MessageWithUser
+import com.stockinos.mobile.wizardofoz.models.*
 import kotlinx.coroutines.flow.Flow
 
 class MessageDao(
@@ -29,8 +28,30 @@ class MessageDao(
 
         val message = wappMessage.toMessage()
         val result = messageDao.insert(message)
-        Log.d(TAG, "insert : $result")
+        when (message.type) {
+            MESSAGE_TYPE_TEXT -> {
+                val text = wappMessage.text
+                text.messageId = wappMessage.id
+                messageDao.insert(text)
+            }
+            MESSAGE_TYPE_IMAGE -> {
+                // val image = wappMessage.image
+                // image.messageId = wappMessage.id
+                // messageDao.insert(image)
+            }
+            MESSAGE_TYPE_AUDIO -> {
+                // val audio = wappMessage.audio
+                // audio.messageId = wappMessage.id
+                // messageDao.insert(audio)
+                throw NotImplementedError()
+            }
+            else -> {
+                throw NotImplementedError()
+            }
+        }
     }
+
+
 
     fun allMessagesAboutUser(user: String): Flow<List<MessageWithUser>> {
         return messageDao.getMessagesAboutUser(user)

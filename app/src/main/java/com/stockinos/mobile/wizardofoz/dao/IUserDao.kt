@@ -1,6 +1,7 @@
 package com.stockinos.mobile.wizardofoz.dao
 
 import androidx.room.*
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.stockinos.mobile.wizardofoz.models.*
 import kotlinx.coroutines.flow.Flow
 
@@ -15,6 +16,9 @@ interface IUserDao {
     @Transaction
     @Query("SELECT * FROM users")
     fun getUserWithSentMessages(): Flow<List<UserWithSentMessages>>
+
+    @RawQuery
+    fun getUserWithAllSentMessages(query: SupportSQLiteQuery): Flow<List<UserWithSentMessages>>
 
     @Transaction
     @Query("SELECT * FROM users")

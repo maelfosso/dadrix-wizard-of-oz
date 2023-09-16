@@ -18,15 +18,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.stockinos.mobile.wizardofoz.messageByUser
 import com.stockinos.mobile.wizardofoz.models.User
 import com.stockinos.mobile.wizardofoz.utils.width
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -116,7 +111,7 @@ fun MessageItem(
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     Text(
-                        text = message.lastMessage.text!!.body,
+                        text = message.lastMessage.summary(),
                         style = TextStyle(
                             fontSize = 14.sp,
                             fontWeight = FontWeight.W400,
@@ -323,12 +318,3 @@ fun messageText() = """
     }
 }
 """
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MessageItem(
-        messageByUser,
-        onClick = {}
-    )
-}

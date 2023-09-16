@@ -1,13 +1,18 @@
 package com.stockinos.mobile.wizardofoz.dao
 
 import android.util.Log
-import com.stockinos.mobile.wizardofoz.models.User
-import com.stockinos.mobile.wizardofoz.models.UserWithMessages
+import androidx.room.RawQuery
+import androidx.sqlite.db.SimpleSQLiteQuery
+import com.stockinos.mobile.wizardofoz.dto.MessageDTO
+import com.stockinos.mobile.wizardofoz.dto.MessageTextDTO
+import com.stockinos.mobile.wizardofoz.models.*
 import com.stockinos.mobile.wizardofoz.ui.messages.MessagesAboutUser
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.runBlocking
 
-class UserDao(private val userDao: IUserDao) {
+class UserDao(
+    private val userDao: IUserDao,
+    private val messageDao: IMessageDao
+) {
     companion object {
         private val TAG = UserDao::class.java.name
     }
@@ -24,16 +29,45 @@ class UserDao(private val userDao: IUserDao) {
             (sent + received)
                 .groupBy ({ it.user }, { it.messages })
                 .mapValues { (_, values) -> values.flatten() }
-                .filterKeys { it.type == "customer" }
+                .filterKeys { it.type == USER_TYPE_CUSTOMER }
+                .mapValues {
+                    val messages = it.value
+                    var messagesDTO = mutableListOf<MessageDTO>()
+
+                    for (message in messages) {
+                        when (message.type) {
+                            MESSAGE_TYPE_TEXT -> {
+                                val messageText = messageDao.getMessageText(message.id)
+                                Log.d("UserDAO", "Message TEXT: ${messageText}")
+                                Log.d("UserDAO", "Message: ${message.id} - ${message.from} - ${message.to} - ${message.timestamp} - ${message.type}")
+                                messagesDTO.add(
+                                    MessageTextDTO(
+                                        id = message.id,
+                                        from = message.from,
+                                        to = message.to,
+                                        timestamp = message.timestamp,
+                                        type = message.type,
+
+                                        textId = messageText.textId,
+                                        body = messageText.body
+                                    )
+                                )
+                            }
+                            else -> throw NotImplementedError()
+                        }
+                    }
+
+                    messagesDTO.toList()
+                }
                 .map { (user, messages) ->
                     Log.d(TAG, "Map. User: $user. Messages: $messages")
                     MessagesAboutUser(
                         user,
-                        messages.sortedBy { m -> m.iTimestamp },
+                        messages.sortedBy { m -> m.timestamp.toLong() },
                         messages.count { m -> m.state == "unread" }
                     )
                 }
-                .sortedBy { m -> m.lastMessage.iTimestamp }
+                .sortedBy { m -> m.lastMessage.timestamp.toLong() }
         }
     }
 }

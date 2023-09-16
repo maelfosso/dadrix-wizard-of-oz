@@ -41,15 +41,6 @@ data class OnWhatsappMessageReceived(
             to = this.to.phoneNumber,
             timestamp = this.timestamp,
             type = this.type,
-
-            textId = this.textId,
-            text = this.text,
-
-            imageId = this.imageId,
-            image = this.image,
-
-            audioId = this.audioId,
-            audio = this.audio
-        );
+        )
     }
 }

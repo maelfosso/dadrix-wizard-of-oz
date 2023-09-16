@@ -31,8 +31,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.stockinos.mobile.wizardofoz.R
-import com.stockinos.mobile.wizardofoz.models.Message
-import com.stockinos.mobile.wizardofoz.models.MessageWithUser
+import com.stockinos.mobile.wizardofoz.models.*
 import com.stockinos.mobile.wizardofoz.ui.theme.WizardOfOzTheme
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -289,7 +288,7 @@ fun ChatItemBubble(
     }
 
     val sdf = SimpleDateFormat("HH:mm")
-    val netDate = Date(message.message.timestamp.toLong() * 1000)
+    val netDate = "" // Date(message.message.timestamp.toLong() * 1000)
 //    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Surface(
             color = backgroundBubbleColor,
@@ -298,7 +297,7 @@ fun ChatItemBubble(
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
-                if (message.message.textId != null) {
+                if (message.message.type == MESSAGE_TYPE_TEXT) { // textId != null) {
                     ClickableMessage(
                         message = message.message,
                         isUserMe = isUserMe,
@@ -306,7 +305,7 @@ fun ChatItemBubble(
                     )
                 }
 
-                if (message.message.imageId != null) {
+                if (message.message.type == MESSAGE_TYPE_IMAGE) { // imageId != null) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Surface(
                         color = backgroundBubbleColor,
@@ -331,7 +330,7 @@ fun ChatItemBubble(
                         if (!isUserMe) {
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = message.message.state.toString(),
+                                text = "", // message.message.state.toString(),
                                 style = MaterialTheme.typography.bodySmall,
                             )
                         }
@@ -365,7 +364,7 @@ fun ClickableMessage(
     val uriHandler = LocalUriHandler.current
 
     val styledMessage = messageFormatter(
-        text = message.text?.body.toString(),
+        text = (message as MessageText).body.toString(),
         primary = isUserMe
     )
 
